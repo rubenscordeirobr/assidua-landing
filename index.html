@@ -1,0 +1,1595 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MindTwin — Clone sua mente. Lance seu app. Monetize sua audiência 24/7.</title>
+<meta name="description" content="A MindTwin cria uma versão digital de você — mesmo tom de voz, mesmos métodos, mesma voz — dentro de um aplicativo próprio na App Store e no Google Play.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   MINDTWIN — Design tokens
+   Paleta: void / violeta-néon / ciano / menta (dinheiro)
+   Display: Sora · Corpo: Inter · Utilitário: JetBrains Mono
+   Assinatura: "a costura" — a linha espelhada que divide
+   você da sua Mente Digital, repetida ao longo da página.
+   ============================================================ */
+:root{
+  --void:#07070B;
+  --ink:#0B0B12;
+  --surface:#111119;
+  --surface-2:#171724;
+  --line:rgba(255,255,255,.08);
+  --line-strong:rgba(255,255,255,.16);
+
+  --violet:#7B5CFF;
+  --violet-dim:#5B3FD6;
+  --cyan:#22D3EE;
+  --mint:#34E4B0;
+  --amber:#FFB86B;
+
+  --text:#F3F3F8;
+  --muted:#9A9AB4;
+  --faint:#63637C;
+
+  --grad:linear-gradient(120deg,#7B5CFF 0%,#9E6BFF 40%,#22D3EE 100%);
+  --grad-soft:linear-gradient(120deg,rgba(123,92,255,.18),rgba(34,211,238,.12));
+
+  --r-sm:10px; --r-md:16px; --r-lg:24px; --r-xl:32px;
+  --maxw:1200px;
+  --ease:cubic-bezier(.16,.84,.44,1);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  background:var(--void);
+  color:var(--text);
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  font-size:17px;
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:3px;border-radius:4px}
+
+/* ---------- Tipografia ---------- */
+h1,h2,h3,h4{font-family:'Sora',sans-serif;font-weight:600;line-height:1.1;letter-spacing:-.03em;margin:0}
+h1{font-size:clamp(2.4rem,5.6vw,4.35rem);font-weight:700;letter-spacing:-.045em}
+h2{font-size:clamp(1.95rem,3.9vw,3.1rem)}
+h3{font-size:clamp(1.15rem,1.7vw,1.4rem);letter-spacing:-.02em}
+p{margin:0}
+
+.eyebrow{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.72rem;font-weight:500;
+  letter-spacing:.22em;text-transform:uppercase;
+  color:var(--violet);
+  display:inline-flex;align-items:center;gap:.65rem;
+  margin-bottom:1.3rem;
+}
+.eyebrow::before{
+  content:"";width:26px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--violet));
+}
+.grad-text{
+  background:var(--grad);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent;
+}
+.lede{font-size:clamp(1.02rem,1.35vw,1.19rem);color:var(--muted);line-height:1.68;max-width:62ch}
+
+/* ---------- Layout ---------- */
+.wrap{width:100%;max-width:var(--maxw);margin:0 auto;padding:0 28px}
+section{position:relative}
+.band{padding:clamp(84px,10vw,148px) 0}
+.band-tight{padding:clamp(60px,7vw,96px) 0}
+.head{max-width:760px;margin-bottom:clamp(48px,6vw,76px)}
+.head.center{margin-left:auto;margin-right:auto;text-align:center}
+.head.center .eyebrow::before{display:none}
+.eyebrow-center{display:flex;justify-content:center}
+.eyebrow-center .eyebrow::before{display:none}
+.head.center .lede{margin-left:auto;margin-right:auto}
+.head h2 + .lede{margin-top:1.4rem}
+
+/* ---------- Assinatura: a costura ---------- */
+.seam{
+  position:relative;height:1px;width:100%;
+  background:linear-gradient(90deg,transparent,var(--line-strong) 18%,var(--line-strong) 82%,transparent);
+}
+.seam::after{
+  content:"";position:absolute;left:50%;top:-2px;
+  width:110px;height:5px;transform:translateX(-50%);
+  background:var(--grad);filter:blur(7px);opacity:.55;
+}
+
+/* ---------- Ambiente ---------- */
+.glow{position:absolute;border-radius:50%;filter:blur(110px);pointer-events:none;z-index:0}
+.glow-a{width:640px;height:640px;background:rgba(123,92,255,.20);top:-220px;left:-180px}
+.glow-b{width:520px;height:520px;background:rgba(34,211,238,.13);top:80px;right:-200px}
+.grid-bg{
+  position:absolute;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,.028) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(255,255,255,.028) 1px,transparent 1px);
+  background-size:64px 64px;
+  mask-image:radial-gradient(ellipse 90% 60% at 50% 0%,#000 20%,transparent 78%);
+  -webkit-mask-image:radial-gradient(ellipse 90% 60% at 50% 0%,#000 20%,transparent 78%);
+}
+
+/* ---------- Botões ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.6rem;
+  padding:.95rem 1.7rem;border-radius:100px;
+  font-family:'Sora',sans-serif;font-weight:600;font-size:.96rem;
+  letter-spacing:-.01em;white-space:nowrap;
+  transition:transform .25s var(--ease),box-shadow .25s var(--ease),background .25s var(--ease),border-color .25s var(--ease);
+}
+.btn-primary{
+  background:var(--grad);color:#08080D;
+  box-shadow:0 8px 30px -8px rgba(123,92,255,.65);
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 40px -8px rgba(123,92,255,.8)}
+.btn-ghost{
+  border:1px solid var(--line-strong);color:var(--text);
+  background:rgba(255,255,255,.03);
+}
+.btn-ghost:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.28)}
+.btn-lg{padding:1.1rem 2.1rem;font-size:1.03rem}
+.btn-sm{padding:.62rem 1.15rem;font-size:.87rem}
+.btn-row{display:flex;gap:.9rem;flex-wrap:wrap;align-items:center}
+
+/* ---------- Cards ---------- */
+.card{
+  background:linear-gradient(180deg,var(--surface) 0%,var(--ink) 100%);
+  border:1px solid var(--line);
+  border-radius:var(--r-lg);
+  padding:2rem;
+  position:relative;overflow:hidden;
+  transition:border-color .3s var(--ease),transform .3s var(--ease);
+}
+.card:hover{border-color:rgba(123,92,255,.42);transform:translateY(-3px)}
+.card h3{margin-bottom:.7rem}
+.card p{color:var(--muted);font-size:.96rem;line-height:1.65}
+
+/* ============================================================
+   NAV
+   ============================================================ */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  padding:1.05rem 0;
+  transition:background .35s var(--ease),border-color .35s var(--ease),padding .35s var(--ease);
+  border-bottom:1px solid transparent;
+}
+.nav.stuck{
+  background:rgba(7,7,11,.82);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom-color:var(--line);
+  padding:.72rem 0;
+}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:1.5rem}
+.logo{display:flex;align-items:center;gap:.65rem;font-family:'Sora',sans-serif;font-weight:700;font-size:1.1rem;letter-spacing:-.03em}
+.logo-mark{
+  width:30px;height:30px;border-radius:9px;
+  background:var(--grad);position:relative;flex-shrink:0;
+  display:grid;place-items:center;
+}
+.logo-mark::after{
+  content:"";width:2px;height:16px;background:rgba(8,8,13,.85);border-radius:2px;
+}
+.nav-links{display:flex;gap:2.1rem;font-size:.93rem;color:var(--muted)}
+.nav-links a{transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{display:flex;align-items:center;gap:.85rem}
+.nav-burger{display:none}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero{padding:clamp(128px,15vw,180px) 0 clamp(70px,8vw,104px);overflow:hidden}
+.hero-grid{
+  display:grid;grid-template-columns:1.06fr .94fr;
+  gap:clamp(2.5rem,5vw,4.5rem);align-items:center;
+  position:relative;z-index:2;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:.6rem;
+  padding:.42rem .95rem .42rem .55rem;border-radius:100px;
+  border:1px solid rgba(123,92,255,.35);
+  background:rgba(123,92,255,.09);
+  font-size:.81rem;color:#CFC5FF;margin-bottom:1.9rem;
+  font-family:'JetBrains Mono',monospace;letter-spacing:.02em;
+}
+.hero-badge .dot{
+  width:7px;height:7px;border-radius:50%;background:var(--mint);
+  box-shadow:0 0 0 4px rgba(52,228,176,.16);
+  animation:pulse 2.4s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.hero h1{margin-bottom:1.6rem}
+.hero .lede{margin-bottom:2.4rem}
+.hero-note{
+  margin-top:1.5rem;font-size:.85rem;color:var(--faint);
+  display:flex;align-items:center;gap:.5rem;
+}
+
+/* Barra de prova social */
+.proof{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:2.4rem 0;position:relative;z-index:2}
+.proof-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;align-items:start}
+.proof-item .num{
+  font-family:'Sora',sans-serif;font-weight:700;
+  font-size:clamp(1.7rem,2.9vw,2.35rem);letter-spacing:-.04em;line-height:1;
+  margin-bottom:.5rem;
+}
+.proof-item .lbl{font-size:.845rem;color:var(--muted);line-height:1.45}
+
+/* ---------- Telefone (mockup) ---------- */
+.phone-stage{position:relative;display:grid;place-items:center;perspective:1400px}
+.phone{
+  position:relative;width:min(310px,88vw);aspect-ratio:9/18.6;
+  background:linear-gradient(160deg,#1D1D2B,#0B0B12);
+  border-radius:44px;padding:11px;
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 50px 100px -30px rgba(0,0,0,.9),
+             0 0 0 1px rgba(123,92,255,.16),
+             0 0 90px -20px rgba(123,92,255,.4);
+  transform:rotateY(-13deg) rotateX(4deg) rotateZ(.8deg);
+  transform-style:preserve-3d;
+  z-index:2;
+}
+.phone-screen{
+  width:100%;height:100%;border-radius:34px;overflow:hidden;
+  background:linear-gradient(175deg,#0E0E17 0%,#08080E 60%);
+  display:flex;flex-direction:column;position:relative;
+}
+.phone-notch{
+  position:absolute;top:9px;left:50%;transform:translateX(-50%);
+  width:78px;height:20px;background:#05050A;border-radius:100px;z-index:5;
+}
+.app-bar{
+  padding:2.3rem 1.05rem .85rem;
+  border-bottom:1px solid rgba(255,255,255,.07);
+  display:flex;align-items:center;gap:.7rem;flex-shrink:0;
+  background:rgba(255,255,255,.02);
+}
+.app-avatar{
+  width:34px;height:34px;border-radius:50%;background:var(--grad);
+  display:grid;place-items:center;font-family:'Sora',sans-serif;
+  font-weight:700;font-size:.82rem;color:#08080D;flex-shrink:0;
+  position:relative;
+}
+.app-avatar::after{
+  content:"";position:absolute;right:-1px;bottom:-1px;
+  width:10px;height:10px;border-radius:50%;background:var(--mint);
+  border:2px solid #0E0E17;
+}
+.app-name{font-family:'Sora',sans-serif;font-weight:600;font-size:.85rem;line-height:1.25}
+.app-status{font-size:.66rem;color:var(--mint);font-family:'JetBrains Mono',monospace;letter-spacing:.03em}
+.app-chan{
+  margin-left:auto;font-size:.58rem;font-family:'JetBrains Mono',monospace;
+  color:var(--faint);border:1px solid var(--line);border-radius:100px;
+  padding:.2rem .5rem;letter-spacing:.06em;
+}
+.chat{
+  flex:1;padding:1rem .95rem;display:flex;flex-direction:column;
+  gap:.62rem;overflow:hidden;
+}
+.msg{
+  max-width:83%;padding:.62rem .85rem;border-radius:16px;
+  font-size:.775rem;line-height:1.52;
+  animation:msgIn .5s var(--ease) both;
+}
+@keyframes msgIn{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
+.msg.them{
+  align-self:flex-start;background:rgba(255,255,255,.065);
+  border:1px solid rgba(255,255,255,.06);
+  border-bottom-left-radius:5px;color:#D9D9E6;
+}
+.msg.twin{
+  align-self:flex-end;
+  background:linear-gradient(135deg,rgba(123,92,255,.9),rgba(94,80,235,.85));
+  border-bottom-right-radius:5px;color:#fff;
+  box-shadow:0 6px 20px -6px rgba(123,92,255,.6);
+}
+.msg.tool{
+  align-self:flex-end;width:83%;
+  background:rgba(34,211,238,.07);border:1px solid rgba(34,211,238,.28);
+  border-bottom-right-radius:5px;border-radius:16px;padding:.7rem .8rem;
+}
+.tool-tag{
+  font-family:'JetBrains Mono',monospace;font-size:.55rem;
+  letter-spacing:.13em;text-transform:uppercase;color:var(--cyan);
+  display:block;margin-bottom:.4rem;
+}
+.tool-row{
+  display:flex;justify-content:space-between;font-size:.7rem;
+  padding:.24rem 0;border-bottom:1px solid rgba(255,255,255,.05);color:#CBD9E0;
+}
+.tool-row:last-child{border-bottom:none}
+.tool-row b{font-weight:600;color:#fff}
+.msg.audio{
+  align-self:flex-end;display:flex;align-items:center;gap:.55rem;
+  background:linear-gradient(135deg,rgba(123,92,255,.9),rgba(94,80,235,.85));
+  border-bottom-right-radius:5px;padding:.6rem .75rem;
+}
+.audio-play{
+  width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.9);
+  display:grid;place-items:center;flex-shrink:0;
+}
+.audio-play::after{
+  content:"";width:0;height:0;margin-left:2px;
+  border-left:7px solid #5B3FD6;border-top:4.5px solid transparent;border-bottom:4.5px solid transparent;
+}
+.wave{display:flex;align-items:center;gap:2px;height:18px}
+.wave i{width:2px;border-radius:2px;background:rgba(255,255,255,.85);animation:wv 1.1s ease-in-out infinite}
+@keyframes wv{0%,100%{height:4px}50%{height:15px}}
+.audio-time{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:rgba(255,255,255,.85)}
+.typing{
+  align-self:flex-end;display:flex;gap:4px;padding:.7rem .85rem;
+  background:rgba(123,92,255,.28);border-radius:16px;border-bottom-right-radius:5px;
+}
+.typing i{width:5px;height:5px;border-radius:50%;background:#CFC5FF;animation:tp 1.3s ease-in-out infinite}
+.typing i:nth-child(2){animation-delay:.18s}
+.typing i:nth-child(3){animation-delay:.36s}
+@keyframes tp{0%,60%,100%{opacity:.28;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+.app-input{
+  margin:0 .95rem 1.1rem;padding:.62rem .9rem;
+  border-radius:100px;border:1px solid rgba(255,255,255,.09);
+  background:rgba(255,255,255,.04);
+  font-size:.72rem;color:var(--faint);
+  display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+}
+.app-input .send{width:22px;height:22px;border-radius:50%;background:var(--grad);flex-shrink:0}
+
+/* Canais orbitando o telefone */
+.chan{
+  position:absolute;z-index:3;
+  display:flex;align-items:center;gap:.5rem;
+  padding:.5rem .85rem;border-radius:100px;
+  background:rgba(17,17,25,.9);border:1px solid var(--line-strong);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  font-size:.75rem;font-weight:500;white-space:nowrap;
+  box-shadow:0 14px 34px -12px rgba(0,0,0,.85);
+  animation:float 6s ease-in-out infinite;
+}
+.chan span{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.chan-1{top:9%;left:-14%;animation-delay:0s}
+.chan-2{top:41%;right:-13%;animation-delay:1.2s}
+.chan-3{bottom:19%;left:-17%;animation-delay:2.4s}
+.chan-4{bottom:5%;right:-8%;animation-delay:3.6s}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-11px)}}
+
+/* ============================================================
+   PROBLEMA
+   ============================================================ */
+.pain-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.1rem}
+.pain{
+  border:1px solid var(--line);border-radius:var(--r-lg);
+  padding:1.9rem;background:var(--ink);
+  border-left:2px solid rgba(255,255,255,.14);
+  transition:border-left-color .3s var(--ease),background .3s var(--ease);
+}
+.pain:hover{border-left-color:var(--amber);background:var(--surface)}
+.pain .stat{
+  font-family:'JetBrains Mono',monospace;font-size:.72rem;
+  letter-spacing:.15em;text-transform:uppercase;color:var(--amber);
+  display:block;margin-bottom:.9rem;
+}
+.pain h3{font-size:1.12rem;margin-bottom:.6rem}
+.pain p{color:var(--muted);font-size:.94rem}
+.pain-close{
+  margin-top:2.6rem;padding:1.6rem 1.9rem;
+  border-radius:var(--r-md);border:1px dashed rgba(255,184,107,.3);
+  background:rgba(255,184,107,.045);
+  font-family:'Sora',sans-serif;font-size:clamp(1.02rem,1.5vw,1.22rem);
+  font-weight:500;line-height:1.5;letter-spacing:-.02em;
+}
+
+/* ============================================================
+   SOLUÇÃO
+   ============================================================ */
+.sol{background:linear-gradient(180deg,var(--void),#0A0A14 45%,var(--void))}
+.sol-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2.5rem,5vw,4.5rem);align-items:center}
+.mirror{
+  position:relative;border-radius:var(--r-xl);overflow:hidden;
+  border:1px solid var(--line);background:var(--ink);
+  display:grid;grid-template-columns:1fr 1px 1fr;
+}
+.mirror-side{padding:2rem 1.5rem;min-height:330px;display:flex;flex-direction:column}
+.mirror-side.you{background:rgba(255,255,255,.015)}
+.mirror-side.twin{background:var(--grad-soft)}
+.mirror-line{background:linear-gradient(180deg,transparent,var(--violet) 25%,var(--cyan) 75%,transparent);position:relative}
+.mirror-line::after{
+  content:"";position:absolute;inset:-1px -4px;
+  background:var(--grad);filter:blur(9px);opacity:.55;
+}
+.mirror-tag{
+  font-family:'JetBrains Mono',monospace;font-size:.66rem;
+  letter-spacing:.18em;text-transform:uppercase;margin-bottom:1.3rem;
+}
+.mirror-side.you .mirror-tag{color:var(--faint)}
+.mirror-side.twin .mirror-tag{color:var(--cyan)}
+.mirror-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.85rem}
+.mirror-list li{
+  font-size:.86rem;line-height:1.45;padding-left:1.5rem;position:relative;
+}
+.mirror-side.you .mirror-list li{color:var(--faint)}
+.mirror-side.you .mirror-list li::before{
+  content:"";position:absolute;left:0;top:.55em;width:9px;height:1px;background:var(--faint);
+}
+.mirror-side.twin .mirror-list li{color:#DCD6FF}
+.mirror-side.twin .mirror-list li::before{
+  content:"";position:absolute;left:1px;top:.42em;width:8px;height:4px;
+  border-left:1.5px solid var(--cyan);border-bottom:1.5px solid var(--cyan);
+  transform:rotate(-45deg);
+}
+.mirror-foot{
+  margin-top:auto;padding-top:1.5rem;font-family:'Sora',sans-serif;
+  font-weight:600;font-size:1.55rem;letter-spacing:-.03em;
+}
+.mirror-side.you .mirror-foot{color:#55556B}
+.mirror-side.twin .mirror-foot{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.mirror-foot small{display:block;font-family:'Inter',sans-serif;font-size:.72rem;font-weight:400;letter-spacing:0;color:var(--faint);-webkit-text-fill-color:var(--faint);margin-top:.2rem}
+.sol-points{display:flex;flex-direction:column;gap:1.6rem;margin-top:2.3rem}
+.sol-point{display:flex;gap:1.1rem}
+.sol-ico{
+  width:38px;height:38px;border-radius:11px;flex-shrink:0;
+  background:rgba(123,92,255,.13);border:1px solid rgba(123,92,255,.3);
+  display:grid;place-items:center;color:var(--violet);
+}
+.sol-point h4{font-family:'Sora',sans-serif;font-size:1rem;font-weight:600;margin-bottom:.25rem;letter-spacing:-.02em}
+.sol-point p{color:var(--muted);font-size:.92rem;line-height:1.6}
+
+/* ============================================================
+   RECURSOS
+   ============================================================ */
+.feat-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:1.1rem}
+.feat{grid-column:span 2}
+.feat-wide{grid-column:span 3}
+.feat-ico{
+  width:44px;height:44px;border-radius:13px;margin-bottom:1.4rem;
+  background:rgba(255,255,255,.05);border:1px solid var(--line-strong);
+  display:grid;place-items:center;color:var(--cyan);
+}
+.feat-tags{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:1.3rem}
+.tag{
+  font-family:'JetBrains Mono',monospace;font-size:.68rem;
+  padding:.28rem .68rem;border-radius:100px;
+  border:1px solid var(--line);color:var(--muted);
+  background:rgba(255,255,255,.025);
+}
+.feat-glow{
+  position:absolute;width:220px;height:220px;border-radius:50%;
+  background:rgba(123,92,255,.16);filter:blur(70px);
+  top:-90px;right:-70px;pointer-events:none;opacity:0;
+  transition:opacity .4s var(--ease);
+}
+.card:hover .feat-glow{opacity:1}
+
+/* ============================================================
+   NICHOS
+   ============================================================ */
+.niche{background:linear-gradient(180deg,var(--void),#0A0A13,var(--void))}
+.tabs{
+  display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;
+  margin-bottom:3.2rem;
+}
+.tab{
+  padding:.7rem 1.35rem;border-radius:100px;
+  border:1px solid var(--line);background:rgba(255,255,255,.025);
+  font-size:.9rem;font-weight:500;color:var(--muted);
+  transition:all .3s var(--ease);
+}
+.tab:hover{color:var(--text);border-color:var(--line-strong)}
+.tab[aria-selected="true"]{
+  background:var(--grad);color:#08080D;font-weight:600;
+  border-color:transparent;
+  box-shadow:0 8px 26px -10px rgba(123,92,255,.75);
+}
+.niche-grid{display:grid;grid-template-columns:.95fr 1.05fr;gap:clamp(2.5rem,5vw,4.5rem);align-items:center}
+.niche-panel{animation:fadeUp .5s var(--ease) both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.niche-kicker{
+  font-family:'JetBrains Mono',monospace;font-size:.72rem;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--cyan);margin-bottom:1.1rem;
+}
+.niche-panel h3{font-size:clamp(1.5rem,2.6vw,2.05rem);margin-bottom:1.1rem}
+.niche-panel > p{color:var(--muted);margin-bottom:1.9rem}
+.niche-mods{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.95rem}
+.niche-mods li{display:flex;gap:.85rem;align-items:flex-start;font-size:.94rem;line-height:1.55}
+.mod-dot{
+  width:20px;height:20px;border-radius:6px;flex-shrink:0;margin-top:.16rem;
+  background:rgba(34,211,238,.12);border:1px solid rgba(34,211,238,.35);
+  display:grid;place-items:center;
+}
+.mod-dot::after{
+  content:"";width:7px;height:3.5px;
+  border-left:1.5px solid var(--cyan);border-bottom:1.5px solid var(--cyan);
+  transform:rotate(-45deg) translate(1px,-1px);
+}
+.niche-mods b{font-weight:600;color:var(--text)}
+.niche-mods span{color:var(--muted)}
+
+/* ============================================================
+   COMO FUNCIONA
+   ============================================================ */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;position:relative}
+.steps::before{
+  content:"";position:absolute;top:31px;left:12%;right:12%;height:1px;
+  background:linear-gradient(90deg,transparent,var(--violet),var(--cyan),transparent);
+  opacity:.4;
+}
+.step{position:relative;padding-top:0}
+.step-num{
+  width:62px;height:62px;border-radius:19px;margin-bottom:1.6rem;
+  background:var(--ink);border:1px solid var(--line-strong);
+  display:grid;place-items:center;position:relative;z-index:2;
+  font-family:'Sora',sans-serif;font-weight:700;font-size:1.32rem;
+  letter-spacing:-.04em;
+  transition:border-color .3s var(--ease),transform .3s var(--ease);
+}
+.step:hover .step-num{border-color:var(--violet);transform:translateY(-3px)}
+.step h3{margin-bottom:.7rem}
+.step p{color:var(--muted);font-size:.95rem}
+.step-meta{
+  margin-top:1.1rem;font-family:'JetBrains Mono',monospace;
+  font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);
+}
+
+/* ============================================================
+   CALCULADORA
+   ============================================================ */
+.calc-shell{
+  border:1px solid var(--line);border-radius:var(--r-xl);
+  background:linear-gradient(150deg,var(--surface-2),var(--ink) 62%);
+  overflow:hidden;display:grid;grid-template-columns:1.08fr .92fr;
+  box-shadow:0 40px 90px -40px rgba(0,0,0,.9);
+}
+.calc-controls{padding:clamp(2rem,3.4vw,2.9rem);border-right:1px solid var(--line)}
+.calc-out{
+  padding:clamp(2rem,3.4vw,2.9rem);
+  background:radial-gradient(ellipse at 70% 0%,rgba(52,228,176,.09),transparent 62%),
+             linear-gradient(180deg,rgba(123,92,255,.07),transparent);
+  display:flex;flex-direction:column;justify-content:center;
+}
+.field{margin-bottom:2.1rem}
+.field:last-of-type{margin-bottom:0}
+.field-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.85rem;gap:1rem}
+.field-lbl{font-size:.88rem;color:var(--muted);font-weight:500}
+.field-val{
+  font-family:'JetBrains Mono',monospace;font-weight:500;font-size:1rem;
+  color:var(--text);background:rgba(255,255,255,.05);
+  border:1px solid var(--line);border-radius:7px;padding:.16rem .6rem;
+}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:4px;
+  border-radius:100px;background:rgba(255,255,255,.1);outline:none;cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;
+  background:#fff;border:4px solid var(--violet);cursor:grab;
+  box-shadow:0 0 0 6px rgba(123,92,255,.16),0 3px 10px rgba(0,0,0,.5);
+  transition:box-shadow .2s;
+}
+input[type=range]::-webkit-slider-thumb:active{cursor:grabbing;box-shadow:0 0 0 10px rgba(123,92,255,.22)}
+input[type=range]::-moz-range-thumb{
+  width:20px;height:20px;border-radius:50%;background:#fff;
+  border:4px solid var(--violet);cursor:grab;
+  box-shadow:0 0 0 6px rgba(123,92,255,.16);
+}
+.calc-hint{
+  margin-top:2.3rem;padding-top:1.5rem;border-top:1px solid var(--line);
+  font-size:.8rem;color:var(--faint);line-height:1.55;
+}
+.out-lbl{
+  font-family:'JetBrains Mono',monospace;font-size:.7rem;
+  letter-spacing:.19em;text-transform:uppercase;color:var(--muted);margin-bottom:.9rem;
+}
+.out-big{
+  font-family:'Sora',sans-serif;font-weight:700;
+  font-size:clamp(2.5rem,5.2vw,3.9rem);letter-spacing:-.05em;line-height:1;
+  background:linear-gradient(120deg,#34E4B0,#22D3EE);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  margin-bottom:.5rem;
+}
+.out-sub{font-size:.92rem;color:var(--muted);margin-bottom:2.2rem}
+.out-rows{display:flex;flex-direction:column;gap:.1rem}
+.out-row{
+  display:flex;justify-content:space-between;align-items:center;gap:1rem;
+  padding:.85rem 0;border-bottom:1px solid var(--line);font-size:.9rem;
+}
+.out-row:last-child{border-bottom:none}
+.out-row span{color:var(--muted)}
+.out-row b{font-family:'JetBrains Mono',monospace;font-weight:500;font-size:.98rem}
+.out-row.hi b{color:var(--mint);font-size:1.12rem}
+.calc-cta{margin-top:2.2rem}
+
+/* ============================================================
+   DEPOIMENTOS
+   ============================================================ */
+.quotes{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem}
+.quote{
+  border:1px solid var(--line);border-radius:var(--r-lg);
+  background:var(--ink);padding:2rem;
+  display:flex;flex-direction:column;
+  transition:border-color .3s var(--ease),transform .3s var(--ease);
+}
+.quote:hover{border-color:rgba(34,211,238,.35);transform:translateY(-3px)}
+.quote-metric{
+  font-family:'Sora',sans-serif;font-weight:700;font-size:1.85rem;
+  letter-spacing:-.04em;margin-bottom:.35rem;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+.quote-metric-lbl{
+  font-size:.78rem;color:var(--faint);margin-bottom:1.5rem;
+  padding-bottom:1.5rem;border-bottom:1px solid var(--line);
+}
+.quote p{font-size:.96rem;line-height:1.68;color:#D3D3E0;margin-bottom:1.8rem;flex:1}
+.quote-who{display:flex;align-items:center;gap:.85rem}
+.quote-av{
+  width:40px;height:40px;border-radius:50%;flex-shrink:0;
+  display:grid;place-items:center;font-family:'Sora',sans-serif;
+  font-weight:600;font-size:.85rem;color:#08080D;
+}
+.quote-name{font-size:.9rem;font-weight:600;line-height:1.3}
+.quote-role{font-size:.79rem;color:var(--faint);line-height:1.3}
+.disclaimer{
+  margin-top:2rem;text-align:center;font-size:.78rem;color:var(--faint);
+}
+
+/* ============================================================
+   FAQ
+   ============================================================ */
+.faq-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:clamp(2.5rem,5vw,4.5rem);align-items:start}
+.faq-list{border-top:1px solid var(--line)}
+.faq-item{border-bottom:1px solid var(--line)}
+.faq-q{
+  width:100%;text-align:left;padding:1.5rem 0;
+  display:flex;align-items:flex-start;justify-content:space-between;gap:1.5rem;
+  font-family:'Sora',sans-serif;font-weight:500;font-size:1.03rem;
+  letter-spacing:-.02em;line-height:1.4;
+  transition:color .2s;
+}
+.faq-q:hover{color:var(--cyan)}
+.faq-ico{
+  width:24px;height:24px;flex-shrink:0;border-radius:50%;
+  border:1px solid var(--line-strong);position:relative;margin-top:.16rem;
+  transition:transform .35s var(--ease),border-color .3s,background .3s;
+}
+.faq-ico::before,.faq-ico::after{
+  content:"";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  background:var(--muted);transition:opacity .3s,background .3s;
+}
+.faq-ico::before{width:10px;height:1.5px}
+.faq-ico::after{width:1.5px;height:10px}
+.faq-item.open .faq-ico{transform:rotate(180deg);border-color:var(--cyan);background:rgba(34,211,238,.1)}
+.faq-item.open .faq-ico::after{opacity:0}
+.faq-item.open .faq-ico::before{background:var(--cyan)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .42s var(--ease)}
+.faq-a p{padding-bottom:1.6rem;color:var(--muted);font-size:.95rem;line-height:1.7;max-width:60ch}
+
+/* ============================================================
+   CTA FINAL
+   ============================================================ */
+.final{position:relative;overflow:hidden;padding:clamp(90px,11vw,150px) 0}
+.final-card{
+  position:relative;z-index:2;
+  border:1px solid rgba(123,92,255,.3);border-radius:var(--r-xl);
+  background:radial-gradient(ellipse at 50% 0%,rgba(123,92,255,.17),transparent 62%),
+             linear-gradient(180deg,var(--surface-2),var(--ink));
+  padding:clamp(2.6rem,5.4vw,4.6rem) clamp(1.8rem,4vw,3.5rem);
+  text-align:center;
+  box-shadow:0 40px 100px -40px rgba(123,92,255,.4);
+}
+.final-card h2{margin-bottom:1.4rem}
+.final-card .lede{margin:0 auto 2.6rem}
+.waitlist{display:flex;gap:.7rem;max-width:520px;margin:0 auto;flex-wrap:wrap}
+.waitlist input[type=email]{
+  flex:1;min-width:230px;padding:1rem 1.35rem;border-radius:100px;
+  background:rgba(255,255,255,.05);border:1px solid var(--line-strong);
+  color:var(--text);font-family:'Inter',sans-serif;font-size:.95rem;
+  transition:border-color .25s,background .25s;
+}
+.waitlist input[type=email]::placeholder{color:var(--faint)}
+.waitlist input[type=email]:focus{outline:none;border-color:var(--violet);background:rgba(255,255,255,.075)}
+.waitlist-msg{
+  margin-top:1.1rem;font-size:.88rem;min-height:1.4em;
+  font-family:'JetBrains Mono',monospace;letter-spacing:.02em;
+}
+.waitlist-msg.ok{color:var(--mint)}
+.waitlist-msg.err{color:var(--amber)}
+.final-meta{
+  margin-top:2.6rem;padding-top:2.2rem;border-top:1px solid var(--line);
+  display:flex;justify-content:center;gap:2.4rem;flex-wrap:wrap;
+  font-size:.83rem;color:var(--faint);
+}
+.final-meta em{font-style:normal;color:var(--text);font-weight:500}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.foot{border-top:1px solid var(--line);padding:4.2rem 0 2.4rem;background:var(--ink)}
+.foot-grid{display:grid;grid-template-columns:1.6fr repeat(3,1fr);gap:2.5rem;margin-bottom:3.4rem}
+.foot-brand p{margin-top:1.2rem;color:var(--muted);font-size:.9rem;max-width:34ch;line-height:1.6}
+.foot-col h4{
+  font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:500;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--faint);margin-bottom:1.15rem;
+}
+.foot-col ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.7rem}
+.foot-col a{font-size:.9rem;color:var(--muted);transition:color .2s}
+.foot-col a:hover{color:var(--text)}
+.foot-bar{
+  border-top:1px solid var(--line);padding-top:2rem;
+  display:flex;justify-content:space-between;gap:1.5rem;flex-wrap:wrap;
+  font-size:.82rem;color:var(--faint);
+}
+.foot-bar div{display:flex;gap:1.5rem;flex-wrap:wrap}
+
+/* ============================================================
+   REVEAL
+   ============================================================ */
+.rv{opacity:0;transform:translateY(24px);transition:opacity .75s var(--ease),transform .75s var(--ease)}
+.rv.in{opacity:1;transform:none}
+
+/* ============================================================
+   RESPONSIVO
+   ============================================================ */
+@media(max-width:1024px){
+  .hero-grid,.sol-grid,.niche-grid,.faq-grid{grid-template-columns:1fr}
+  .phone-stage{margin-top:2.5rem}
+  .calc-shell{grid-template-columns:1fr}
+  .calc-controls{border-right:none;border-bottom:1px solid var(--line)}
+  .feat{grid-column:span 3}
+  .feat-wide{grid-column:span 3}
+  .quotes{grid-template-columns:1fr}
+  .foot-grid{grid-template-columns:1fr 1fr;gap:2.2rem}
+  .nav-links{display:none}
+  .proof-grid{grid-template-columns:repeat(2,1fr);gap:1.8rem}
+}
+@media(max-width:760px){
+  body{font-size:16px}
+  .wrap{padding:0 20px}
+  .pain-grid{grid-template-columns:1fr}
+  .steps{grid-template-columns:1fr;gap:2.2rem}
+  .steps::before{display:none}
+  .feat,.feat-wide{grid-column:span 6}
+  .feat-grid{grid-template-columns:1fr}
+  .mirror{grid-template-columns:1fr;grid-template-rows:auto 1px auto}
+  .mirror-line{background:linear-gradient(90deg,transparent,var(--violet),var(--cyan),transparent)}
+  .mirror-side{min-height:0}
+  .chan-1{left:-4%;top:5%}
+  .chan-2{right:-4%}
+  .chan-3{left:-4%;bottom:14%}
+  .chan-4{right:-2%;bottom:2%}
+  .foot-grid{grid-template-columns:1fr}
+  .btn-row{width:100%}
+  .btn-row .btn{flex:1;min-width:200px}
+  .final-meta{gap:1.2rem;flex-direction:column}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+  .rv{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= NAV ================= -->
+<nav class="nav" id="nav">
+  <div class="wrap nav-inner">
+    <a href="#topo" class="logo"><span class="logo-mark"></span>MindTwin</a>
+    <div class="nav-links">
+      <a href="#solucao">Como funciona</a>
+      <a href="#recursos">Recursos</a>
+      <a href="#nichos">Para o seu nicho</a>
+      <a href="#calculadora">Faturamento</a>
+      <a href="#faq">Dúvidas</a>
+    </div>
+    <div class="nav-cta">
+      <a href="#demo" class="btn btn-ghost btn-sm">Agendar demonstração</a>
+      <a href="#beta" class="btn btn-primary btn-sm">Entrar no Beta</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ================= HERO ================= -->
+<header class="hero" id="topo">
+  <div class="grid-bg"></div>
+  <div class="glow glow-a"></div>
+  <div class="glow glow-b"></div>
+  <div class="wrap hero-grid">
+
+    <div>
+      <div class="hero-badge"><span class="dot"></span>Beta fechado · 40 vagas para o 1º lote</div>
+      <h1>Clone sua mente.<br>Lance seu app.<br><span class="grad-text">Monetize 24 horas por dia.</span></h1>
+      <p class="lede">A MindTwin cria uma versão digital de você — seu tom de voz, seus métodos, sua voz real — e coloca ela dentro de um aplicativo com a sua marca na App Store e no Google Play. Seus seguidores assinam para conversar com ela. Você não responde mais um DM sequer.</p>
+      <div class="btn-row">
+        <a href="#beta" class="btn btn-primary btn-lg">Criar minha Mente Digital</a>
+        <a href="#demo" class="btn btn-ghost btn-lg">Agendar demonstração VIP</a>
+      </div>
+      <p class="hero-note">Sem cartão de crédito. Primeira versão da sua mente pronta em 7 dias.</p>
+    </div>
+
+    <div class="phone-stage">
+      <div class="chan chan-1"><span style="background:#E1306C"></span>Instagram Direct</div>
+      <div class="chan chan-2"><span style="background:#25D366"></span>WhatsApp</div>
+      <div class="chan chan-3"><span style="background:#29B6F6"></span>Telegram</div>
+      <div class="chan chan-4"><span style="background:var(--violet)"></span>App próprio</div>
+
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="app-bar">
+            <div class="app-avatar">CM</div>
+            <div>
+              <div class="app-name">Camila Moura</div>
+              <div class="app-status">Mente Digital · online</div>
+            </div>
+            <div class="app-chan">DM</div>
+          </div>
+          <div class="chat" id="heroChat"></div>
+          <div class="app-input"><span>Escreva sua pergunta…</span><span class="send"></span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</header>
+
+<!-- ================= PROVA SOCIAL ================= -->
+<section class="proof">
+  <div class="wrap">
+    <div class="proof-grid">
+      <div class="proof-item rv">
+        <div class="num grad-text" data-count="128" data-suffix="mil">0</div>
+        <div class="lbl">conversas atendidas pelas Mentes Digitais em operação</div>
+      </div>
+      <div class="proof-item rv">
+        <div class="num grad-text" data-count="94" data-suffix="%">0</div>
+        <div class="lbl">de retenção mensal média nos apps publicados</div>
+      </div>
+      <div class="proof-item rv">
+        <div class="num grad-text" data-count="7" data-suffix=" dias">0</div>
+        <div class="lbl">do upload dos seus conteúdos até a mente respondendo</div>
+      </div>
+      <div class="proof-item rv">
+        <div class="num grad-text" data-count="4" data-prefix="+" data-suffix=" nichos">0</div>
+        <div class="lbl">fitness, nutrição, relacionamentos e finanças</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PROBLEMA ================= -->
+<section class="band" id="problema">
+  <div class="wrap">
+    <div class="head rv">
+      <div class="eyebrow">O gargalo</div>
+      <h2>Você não escala porque só existe um de você.</h2>
+      <p class="lede">Sua audiência cresceu. Sua capacidade de atender, não. E todo mês a distância entre as duas coisas vira dinheiro que você deixa na mesa — e energia que você não tem mais.</p>
+    </div>
+
+    <div class="pain-grid">
+      <div class="pain rv">
+        <span class="stat">3.400 não lidas</span>
+        <h3>A caixa de entrada virou uma dívida</h3>
+        <p>Cada DM sem resposta é um seguidor que esfria, um cliente que não fecha e uma culpa que você carrega no fim do dia. Responder todos é humanamente impossível. Ignorar custa autoridade.</p>
+      </div>
+      <div class="pain rv">
+        <span class="stat">Teto de hora</span>
+        <h3>Sua agenda está cheia, seu faturamento não</h3>
+        <p>Consultoria individual trava seu preço no número de horas que você consegue acordar. Dobrar a receita significa dobrar o desgaste — e você já está no limite.</p>
+      </div>
+      <div class="pain rv">
+        <span class="stat">Ciclo infinito</span>
+        <h3>Conteúdo demais, retorno de menos</h3>
+        <p>Você produz sem parar para alimentar o algoritmo, mas o alcance é alugado. Se você para uma semana, tudo cai. A plataforma cresce com o seu trabalho, você não.</p>
+      </div>
+      <div class="pain rv">
+        <span class="stat">Risco de chave única</span>
+        <h3>Seu método só existe dentro da sua cabeça</h3>
+        <p>Tudo o que te torna referência — os atalhos, as respostas prontas, o jeito de explicar — não está registrado em lugar nenhum. Não é um ativo. É uma rotina que depende de você estar disponível.</p>
+      </div>
+    </div>
+
+    <div class="pain-close rv">
+      O problema nunca foi a demanda. É que a única pessoa capaz de entregar o que você entrega precisa dormir, viajar e viver.
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="seam"></div></div>
+
+<!-- ================= SOLUÇÃO ================= -->
+<section class="band sol" id="solucao">
+  <div class="wrap">
+    <div class="head rv">
+      <div class="eyebrow">A virada</div>
+      <h2>Uma segunda versão de você.<br><span class="grad-text">Que nunca dorme e nunca esquece.</span></h2>
+      <p class="lede">A Mente Digital não é um chatbot com o seu nome. É um modelo treinado nos seus cursos, livros, lives, posts e gravações de voz — que responde do jeito que você responderia, com os seus métodos, dentro do app que leva a sua marca.</p>
+    </div>
+
+    <div class="sol-grid">
+      <div class="rv">
+        <div class="mirror">
+          <div class="mirror-side you">
+            <div class="mirror-tag">Você hoje</div>
+            <ul class="mirror-list">
+              <li>Responde de 8 às 22h, nos dias bons</li>
+              <li>Atende 15 pessoas por semana</li>
+              <li>Repete a mesma explicação 40 vezes</li>
+              <li>Perde o lead que perguntou às 2h da manhã</li>
+              <li>Cobra por hora, em um só fuso horário</li>
+            </ul>
+            <div class="mirror-foot">1×<small>capacidade</small></div>
+          </div>
+          <div class="mirror-line"></div>
+          <div class="mirror-side twin">
+            <div class="mirror-tag">Você + MindTwin</div>
+            <ul class="mirror-list">
+              <li>Responde 24/7, em qualquer idioma</li>
+              <li>Atende milhares em paralelo</li>
+              <li>Explica com a sua voz clonada, em áudio</li>
+              <li>Converte o lead das 2h enquanto você dorme</li>
+              <li>Cobra assinatura recorrente de toda a base</li>
+            </ul>
+            <div class="mirror-foot">∞<small>capacidade</small></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rv">
+        <div class="sol-points">
+          <div class="sol-point">
+            <div class="sol-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3v18M5 8l7-5 7 5M5 16l7 5 7-5"/></svg></div>
+            <div>
+              <h4>Treinada no seu acervo, não na internet</h4>
+              <p>Ela responde a partir do que você já produziu. Nada de conselho genérico: se o seu método diz uma coisa, ela diz essa coisa.</p>
+            </div>
+          </div>
+          <div class="sol-point">
+            <div class="sol-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3"/></svg></div>
+            <div>
+              <h4>Fala com a sua voz, literalmente</h4>
+              <p>Clonagem de timbre e ritmo a partir de poucos minutos de gravação. Respostas em áudio que soam como você mandou o áudio.</p>
+            </div>
+          </div>
+          <div class="sol-point">
+            <div class="sol-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M11 18h2"/></svg></div>
+            <div>
+              <h4>Mora em um app que é seu</h4>
+              <p>Ícone, cores, nome e loja próprios. Seu público baixa o seu aplicativo — não uma página em um domínio de terceiros.</p>
+            </div>
+          </div>
+          <div class="sol-point">
+            <div class="sol-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 1v22M17 5.5C17 3.6 14.8 2.8 12 2.8S7 3.6 7 5.5c0 4.6 10 2.1 10 6.9 0 1.9-2.2 2.8-5 2.8s-5-.9-5-2.8"/></svg></div>
+            <div>
+              <h4>Cobra por você, todo mês</h4>
+              <p>Paywall integrado com planos grátis, mensais e anuais. A cobrança acontece dentro do app, sem você pedir Pix para ninguém.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= RECURSOS ================= -->
+<section class="band" id="recursos">
+  <div class="wrap">
+    <div class="head center rv">
+      <div class="eyebrow">O que vem na plataforma</div>
+      <h2>Tudo pronto. Nada para programar.</h2>
+      <p class="lede">Cinco peças que, juntas, transformam a sua autoridade em um produto digital que cobra assinatura sozinho.</p>
+    </div>
+
+    <div class="feat-grid">
+      <div class="card feat feat-wide rv">
+        <div class="feat-glow"></div>
+        <div class="feat-ico"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M11 18h2M9 6h6"/></svg></div>
+        <h3>App nativo com a sua marca</h3>
+        <p>Publicamos o aplicativo na App Store e no Google Play em nome da sua marca. Ícone, cores, splash screen, nome e ficha da loja definidos por você. Push notification para reengajar quem sumiu, e login que já reconhece o assinante. O usuário nunca vê a palavra MindTwin.</p>
+        <div class="feat-tags"><span class="tag">iOS</span><span class="tag">Android</span><span class="tag">white-label</span><span class="tag">push</span></div>
+      </div>
+
+      <div class="card feat feat-wide rv">
+        <div class="feat-glow"></div>
+        <div class="feat-ico"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M4.9 4.9l2.9 2.9M16.2 16.2l2.9 2.9M19.1 4.9l-2.9 2.9M7.8 16.2l-2.9 2.9"/></svg></div>
+        <h3>Um cérebro, todos os canais</h3>
+        <p>A mesma mente atende no Instagram Direct, no WhatsApp, no Telegram, por e-mail, no widget do seu site e dentro do app. A memória da conversa acompanha o seguidor entre os canais: ele pergunta no DM, continua no WhatsApp e a mente lembra do contexto.</p>
+        <div class="feat-tags"><span class="tag">Instagram</span><span class="tag">WhatsApp</span><span class="tag">Telegram</span><span class="tag">e-mail</span><span class="tag">widget web</span></div>
+      </div>
+
+      <div class="card feat rv">
+        <div class="feat-glow"></div>
+        <div class="feat-ico"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M3 12v-1M7 15V9M11 19V5M15 16V8M19 13v-2M23 12v-1"/></svg></div>
+        <h3>Voz clonada em áudio</h3>
+        <p>Grave 10 minutos e a mente passa a responder em áudio com o seu timbre, ritmo e sotaque. É o que faz o assinante sentir que falou com você — e é o que segura a retenção.</p>
+        <div class="feat-tags"><span class="tag">TTS</span><span class="tag">PT-BR</span><span class="tag">multilíngue</span></div>
+      </div>
+
+      <div class="card feat rv">
+        <div class="feat-glow"></div>
+        <div class="feat-ico"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg></div>
+        <h3>Módulos por nicho</h3>
+        <p>Além de conversar, a mente executa. Gerador de treinos, diário alimentar por foto, análise de print de conversa, calculadora de orçamento — você liga os módulos que fazem sentido para o seu público.</p>
+        <div class="feat-tags"><span class="tag">visão</span><span class="tag">calculadoras</span><span class="tag">geradores</span></div>
+      </div>
+
+      <div class="card feat rv">
+        <div class="feat-glow"></div>
+        <div class="feat-ico"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="3" y="10" width="18" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
+        <h3>Paywall e central de conteúdo</h3>
+        <p>Vídeos, podcasts, PDFs e fórum fechado atrás do plano que você definir. Grátis para atrair, VIP para faturar. Assinatura processada nas lojas ou no seu gateway, com relatório de churn.</p>
+        <div class="feat-tags"><span class="tag">assinaturas</span><span class="tag">fórum</span><span class="tag">métricas</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= NICHOS ================= -->
+<section class="band niche" id="nichos">
+  <div class="wrap">
+    <div class="head center rv">
+      <div class="eyebrow">Adaptação por nicho</div>
+      <h2>O mesmo motor. Um produto diferente para cada especialidade.</h2>
+      <p class="lede">Escolha a sua área e veja o que a Mente Digital entrega no dia a dia do seu assinante.</p>
+    </div>
+
+    <div class="tabs" role="tablist" aria-label="Nichos atendidos">
+      <button class="tab" role="tab" aria-selected="true" data-niche="fitness">Fitness &amp; Treinos</button>
+      <button class="tab" role="tab" aria-selected="false" data-niche="nutri">Nutrição</button>
+      <button class="tab" role="tab" aria-selected="false" data-niche="relacao">Relacionamentos</button>
+      <button class="tab" role="tab" aria-selected="false" data-niche="fin">Finanças &amp; Carreira</button>
+    </div>
+
+    <div class="niche-grid">
+      <div id="nichePanel"></div>
+      <div class="phone-stage">
+        <div class="phone">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="app-bar">
+              <div class="app-avatar" id="nicheAv">RT</div>
+              <div>
+                <div class="app-name" id="nicheName">—</div>
+                <div class="app-status">Mente Digital · online</div>
+              </div>
+              <div class="app-chan" id="nicheChan">APP</div>
+            </div>
+            <div class="chat" id="nicheChat"></div>
+            <div class="app-input"><span>Escreva sua pergunta…</span><span class="send"></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= COMO FUNCIONA ================= -->
+<section class="band" id="passos">
+  <div class="wrap">
+    <div class="head center rv">
+      <div class="eyebrow">Do zero ao app publicado</div>
+      <h2>Três etapas. Sete dias.</h2>
+      <p class="lede">Você entrega o conteúdo e as decisões de marca. A gente entrega o treinamento, o app e a infraestrutura de cobrança.</p>
+    </div>
+
+    <div class="steps">
+      <div class="step rv">
+        <div class="step-num grad-text">01</div>
+        <h3>Treine a sua mente</h3>
+        <p>Suba cursos, e-books, transcrições de lives, posts e um áudio de 10 minutos. A plataforma organiza tudo em uma base de conhecimento e aprende o seu tom de voz, os seus bordões e a sua forma de argumentar.</p>
+        <div class="step-meta">PDF · DOCX · MP3 · MP4 · YouTube · links</div>
+      </div>
+      <div class="step rv">
+        <div class="step-num grad-text">02</div>
+        <h3>Monte o seu app</h3>
+        <p>Escolha cores, logo e nome. Ative os módulos do seu nicho, defina o que é grátis e o que é VIP, e revise as respostas da mente em um simulador antes de qualquer pessoa falar com ela.</p>
+        <div class="step-meta">Marca · módulos · planos · revisão</div>
+      </div>
+      <div class="step rv">
+        <div class="step-num grad-text">03</div>
+        <h3>Publique e cobre</h3>
+        <p>Nós subimos o app nas lojas e conectamos os seus canais. A partir daí a mente atende, qualifica e converte sozinha — e você acompanha assinantes, receita e conversas em um painel único.</p>
+        <div class="step-meta">App Store · Google Play · canais · painel</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="seam"></div></div>
+
+<!-- ================= CALCULADORA ================= -->
+<section class="band" id="calculadora">
+  <div class="wrap">
+    <div class="head center rv">
+      <div class="eyebrow">Projeção de receita</div>
+      <h2>Quanto vale a sua audiência hoje?</h2>
+      <p class="lede">Mova os controles com os seus números reais. A conta usa taxas de conversão conservadoras, do tipo que a gente vê acontecer no primeiro trimestre.</p>
+    </div>
+
+    <div class="calc-shell rv">
+      <div class="calc-controls">
+        <div class="field">
+          <div class="field-top">
+            <label class="field-lbl" for="sFol">Tamanho da sua audiência</label>
+            <span class="field-val" id="vFol">50.000</span>
+          </div>
+          <input type="range" id="sFol" min="1000" max="1000000" step="1000" value="50000">
+        </div>
+        <div class="field">
+          <div class="field-top">
+            <label class="field-lbl" for="sConv">Quantos viram assinantes</label>
+            <span class="field-val" id="vConv">1,0%</span>
+          </div>
+          <input type="range" id="sConv" min="1" max="50" step="1" value="10">
+        </div>
+        <div class="field">
+          <div class="field-top">
+            <label class="field-lbl" for="sPrice">Preço da assinatura VIP</label>
+            <span class="field-val" id="vPrice">R$ 29</span>
+          </div>
+          <input type="range" id="sPrice" min="9" max="297" step="1" value="29">
+        </div>
+        <p class="calc-hint">Estimativa ilustrativa, não é promessa de resultado. A conversão real depende do seu vínculo com a audiência, da oferta e da frequência com que você aparece. Nos apps em operação, a faixa observada fica entre 0,6% e 3%.</p>
+      </div>
+
+      <div class="calc-out">
+        <div class="out-lbl">Receita recorrente mensal</div>
+        <div class="out-big" id="oMrr">R$ 14.500</div>
+        <div class="out-sub" id="oSubs">500 assinantes pagando todo mês</div>
+
+        <div class="out-rows">
+          <div class="out-row"><span>Receita em 12 meses</span><b id="oArr">R$ 174.000</b></div>
+          <div class="out-row"><span>Conversas que você deixa de responder</span><b id="oMsgs">15.000/mês</b></div>
+          <div class="out-row"><span>Horas devolvidas para você</span><b id="oHours">62 h/mês</b></div>
+          <div class="out-row hi"><span>Receita líquida estimada</span><b id="oNet">R$ 11.310</b></div>
+        </div>
+
+        <div class="calc-cta">
+          <a href="#beta" class="btn btn-primary">Quero esse faturamento rodando</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= DEPOIMENTOS ================= -->
+<section class="band" id="depoimentos">
+  <div class="wrap">
+    <div class="head center rv">
+      <div class="eyebrow">Quem já tem um gêmeo digital</div>
+      <h2>O que muda depois do primeiro mês.</h2>
+    </div>
+
+    <div class="quotes">
+      <div class="quote rv">
+        <div class="quote-metric">R$ 41 mil/mês</div>
+        <div class="quote-metric-lbl">receita recorrente no 3º mês, com 118 mil seguidores</div>
+        <p>Eu tinha 2.800 DMs sem resposta e vivia com aquele peso. Hoje a mente responde dúvida de execução de exercício às 5 da manhã, com a minha voz, e o aluno acha ótimo. Eu voltei a treinar no meu horário.</p>
+        <div class="quote-who">
+          <div class="quote-av" style="background:linear-gradient(135deg,#7B5CFF,#22D3EE)">RT</div>
+          <div>
+            <div class="quote-name">Rafael Teixeira</div>
+            <div class="quote-role">Personal trainer · São Paulo</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="quote rv">
+        <div class="quote-metric">94% retenção</div>
+        <div class="quote-metric-lbl">assinantes ativos após 90 dias no app</div>
+        <p>O que segurou o pessoal foi o diário alimentar por foto. A pessoa fotografa o prato, recebe o ajuste na hora e sente que está sendo acompanhada. Antes eu conseguia dar isso para 30 pacientes. Agora dou para 900.</p>
+        <div class="quote-who">
+          <div class="quote-av" style="background:linear-gradient(135deg,#34E4B0,#22D3EE)">JA</div>
+          <div>
+            <div class="quote-name">Juliana Andrade</div>
+            <div class="quote-role">Nutricionista · Curitiba</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="quote rv">
+        <div class="quote-metric">18 h/semana</div>
+        <div class="quote-metric-lbl">de atendimento manual que saíram da agenda</div>
+        <p>Meu medo era soar robótico e queimar a marca que levei oito anos para construir. Passei duas semanas corrigindo respostas no simulador. Hoje leio as conversas e não distingo o que é meu do que é dela.</p>
+        <div class="quote-who">
+          <div class="quote-av" style="background:linear-gradient(135deg,#FFB86B,#7B5CFF)">MC</div>
+          <div>
+            <div class="quote-name">Marcos Camargo</div>
+            <div class="quote-role">Mentor de finanças · Florianópolis</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="disclaimer">Depoimentos ilustrativos criados para demonstração da plataforma. Resultados variam conforme audiência e oferta.</p>
+  </div>
+</section>
+
+<!-- ================= FAQ ================= -->
+<section class="band" id="faq">
+  <div class="wrap">
+    <div class="faq-grid">
+      <div class="rv">
+        <div class="eyebrow">Antes de decidir</div>
+        <h2>Perguntas que todo especialista faz.</h2>
+        <p class="lede" style="margin-top:1.3rem">Não achou a sua? Fale com um consultor na demonstração — a conversa é com gente, não com a mente.</p>
+        <div class="btn-row" style="margin-top:1.8rem"><a href="#demo" class="btn btn-ghost">Agendar demonstração</a></div>
+      </div>
+
+      <div class="faq-list rv">
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">A IA vai soar como um robô?<span class="faq-ico"></span></button>
+          <div class="faq-a"><p>Ela é treinada no seu material, então herda as suas palavras, os seus exemplos e o seu jeito de estruturar um argumento. Antes de publicar, você passa por uma etapa de revisão em que testa perguntas e corrige respostas até o tom ficar certo. E quando a resposta sai em áudio com a sua voz clonada, a diferença some.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">Quanto tempo demora para configurar?<span class="faq-ico"></span></button>
+          <div class="faq-a"><p>Em média sete dias entre o upload dos conteúdos e o app publicado. O seu trabalho concentra-se nas primeiras 48 horas: reunir os materiais, gravar 10 minutos de áudio e definir marca e planos. O resto é execução nossa, incluindo a submissão às lojas.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">Preciso saber programar?<span class="faq-ico"></span></button>
+          <div class="faq-a"><p>Não. Todo o painel funciona por upload, seleção e formulário. Ativar um módulo é clicar em um botão, e trocar a cor do app é escolher no seletor. Nenhuma linha de código em momento nenhum. Se você tem equipe técnica, existe uma API — mas ela é opcional.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">Como funciona a segurança dos meus conteúdos?<span class="faq-ico"></span></button>
+          <div class="faq-a"><p>Seu material fica em uma base isolada, usada exclusivamente para treinar a sua mente. Não alimentamos modelos públicos, não compartilhamos com outros clientes e não usamos o seu acervo para nenhuma outra finalidade. Criptografia em trânsito e em repouso, adequação à LGPD e exportação ou exclusão completa dos dados a qualquer momento.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">E se ela responder algo errado?<span class="faq-ico"></span></button>
+          <div class="faq-a"><p>A mente responde a partir do seu acervo e admite quando não sabe, em vez de inventar. Você define temas proibidos e situações em que ela deve encaminhar para o seu time. Todas as conversas ficam registradas no painel, e correções que você faz entram no treinamento da próxima versão.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">O app é meu ou de vocês?<span class="faq-ico"></span></button>
+          <div class="faq-a"><p>A marca, a base de assinantes e o conteúdo são seus. O app é publicado sob a sua identidade e a lista de e-mails dos assinantes é exportável quando você quiser. Se decidir sair, você leva a sua audiência junto.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CTA FINAL ================= -->
+<section class="final" id="beta">
+  <div class="glow glow-a" style="left:50%;transform:translateX(-50%);top:0;opacity:.55"></div>
+  <div class="wrap">
+    <div class="final-card">
+      <div class="eyebrow-center"><div class="eyebrow">Primeiro lote do Beta</div></div>
+      <h2>40 especialistas. <span class="grad-text">Um por nicho e região.</span></h2>
+      <p class="lede">No primeiro lote, cada participante entra com acompanhamento direto do nosso time no treinamento da mente e na publicação do app — e trava a condição de fundador pelos 12 primeiros meses. Depois disso, entrada apenas pela lista de espera.</p>
+
+      <div class="waitlist">
+        <input type="email" id="email" placeholder="seu@email.com" aria-label="Seu e-mail">
+        <button class="btn btn-primary" id="joinBtn">Garantir minha vaga</button>
+      </div>
+      <div class="waitlist-msg" id="msg" role="status" aria-live="polite"></div>
+
+      <div class="final-meta" id="demo">
+        <span><em>Sem cartão</em> para entrar na lista</span>
+        <span><em>Diagnóstico gratuito</em> da sua audiência</span>
+        <span><em>Cancelamento</em> a qualquer momento</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a href="#topo" class="logo"><span class="logo-mark"></span>MindTwin</a>
+        <p>A plataforma que transforma a autoridade de especialistas em um aplicativo próprio com Mente Digital, presença omnichannel e assinatura recorrente.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Plataforma</h4>
+        <ul>
+          <li><a href="#recursos">Recursos</a></li>
+          <li><a href="#nichos">Módulos por nicho</a></li>
+          <li><a href="#passos">Como funciona</a></li>
+          <li><a href="#calculadora">Calculadora de receita</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Empresa</h4>
+        <ul>
+          <li><a href="#beta">Programa Beta</a></li>
+          <li><a href="#demo">Agendar demonstração</a></li>
+          <li><a href="#depoimentos">Casos de uso</a></li>
+          <li><a href="#faq">Perguntas frequentes</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Confiança</h4>
+        <ul>
+          <li><a href="#faq">Segurança e LGPD</a></li>
+          <li><a href="#faq">Propriedade do conteúdo</a></li>
+          <li><a href="#faq">Termos de uso</a></li>
+          <li><a href="#faq">Política de privacidade</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bar">
+      <span>© 2026 MindTwin. Todos os direitos reservados.</span>
+      <div>
+        <span>Feito no Brasil</span>
+        <span>contato@mindtwin.com.br</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  'use strict';
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- NAV ---------- */
+  var nav = document.getElementById('nav');
+  function onScroll(){ nav.classList.toggle('stuck', window.scrollY > 24); }
+  window.addEventListener('scroll', onScroll, {passive:true}); onScroll();
+
+  /* ---------- REVEAL ---------- */
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, {threshold:.12, rootMargin:'0px 0px -60px 0px'});
+  document.querySelectorAll('.rv').forEach(function(el,i){
+    el.style.transitionDelay = ((i % 4) * 70) + 'ms';
+    io.observe(el);
+  });
+
+  /* ---------- CONTADORES ---------- */
+  var counted = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(!e.isIntersecting) return;
+      var el = e.target, target = parseFloat(el.dataset.count);
+      var pre = el.dataset.prefix || '', suf = el.dataset.suffix || '';
+      if(reduce){ el.textContent = pre + target + suf; counted.unobserve(el); return; }
+      var start = performance.now(), dur = 1400;
+      function tick(now){
+        var p = Math.min((now - start) / dur, 1);
+        var eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = pre + Math.round(target * eased) + suf;
+        if(p < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+      counted.unobserve(el);
+    });
+  }, {threshold:.5});
+  document.querySelectorAll('[data-count]').forEach(function(el){ counted.observe(el); });
+
+  /* ---------- MOCKUP: construtor de mensagens ---------- */
+  function build(node, items){
+    node.innerHTML = '';
+    items.forEach(function(m, i){
+      var el = document.createElement('div');
+      if(m.t === 'them'){ el.className = 'msg them'; el.textContent = m.x; }
+      else if(m.t === 'twin'){ el.className = 'msg twin'; el.textContent = m.x; }
+      else if(m.t === 'audio'){
+        el.className = 'msg audio';
+        var bars = '';
+        for(var b = 0; b < 14; b++){
+          bars += '<i style="animation-delay:' + (b * 0.08).toFixed(2) + 's"></i>';
+        }
+        el.innerHTML = '<span class="audio-play"></span><span class="wave">' + bars + '</span><span class="audio-time">' + m.x + '</span>';
+      }
+      else if(m.t === 'tool'){
+        el.className = 'msg tool';
+        var rows = m.rows.map(function(r){
+          return '<div class="tool-row"><span>' + r[0] + '</span><b>' + r[1] + '</b></div>';
+        }).join('');
+        el.innerHTML = '<span class="tool-tag">' + m.tag + '</span>' + rows;
+      }
+      else if(m.t === 'typing'){
+        el.className = 'typing'; el.innerHTML = '<i></i><i></i><i></i>';
+      }
+      if(!reduce) el.style.animationDelay = (i * 0.42 + 0.15) + 's';
+      node.appendChild(el);
+    });
+  }
+
+  /* ---------- HERO ---------- */
+  build(document.getElementById('heroChat'), [
+    {t:'them', x:'Camila, tô travada há 3 semanas no mesmo peso mesmo seguindo tudo certinho 😩'},
+    {t:'twin', x:'Platô é normal na semana 3. Você ainda está no protocolo de déficit moderado que montei?'},
+    {t:'them', x:'Sim! Não mudei nada.'},
+    {t:'audio', x:'0:22'},
+    {t:'typing'}
+  ]);
+
+  /* ---------- NICHOS ---------- */
+  var NICHES = {
+    fitness: {
+      kicker:'Fitness & Treinos',
+      title:'Fichas dinâmicas e correção de execução, no meio do treino',
+      intro:'O aluno abre o app na academia, vê a série do dia e tira dúvida de execução sem esperar você responder. A mente ajusta carga e volume conforme ele registra o desempenho.',
+      mods:[
+        ['Gerador de fichas','monta e progride o treino a partir do objetivo, dos dias disponíveis e dos equipamentos que o aluno tem.'],
+        ['Dúvida de execução','o aluno descreve ou filma o movimento e recebe a correção com a sua voz.'],
+        ['Registro de cargas','histórico por exercício, com alerta quando a progressão trava.'],
+        ['Check-in semanal','a mente puxa conversa, coleta o feedback e sinaliza quem está prestes a desistir.']
+      ],
+      av:'RT', name:'Rafael Teixeira', chan:'APP',
+      chat:[
+        {t:'them', x:'Tô na academia, o supino inclinado tá doendo no ombro. Troco?'},
+        {t:'tool', tag:'Ficha do dia · Peito & Tríceps', rows:[['Supino inclinado','substituído'],['Crucifixo halter','3× 12 · 14 kg'],['Paralelas','3× até a falha']]},
+        {t:'twin', x:'Troquei por crucifixo com halter, que tira a pressão da articulação. Mantém a amplitude curta hoje.'},
+        {t:'audio', x:'0:15'}
+      ]
+    },
+    nutri: {
+      kicker:'Nutrição',
+      title:'Diário alimentar por foto, com ajuste na hora da refeição',
+      intro:'O paciente fotografa o prato e recebe a leitura da refeição e o ajuste imediato. O acompanhamento que antes cabia em 30 pessoas passa a caber em milhares.',
+      mods:[
+        ['Análise por foto','identifica os alimentos, estima porções e calcula macros a partir da imagem do prato.'],
+        ['Ajuste de cardápio','remonta o restante do dia quando o paciente escapa da rota.'],
+        ['Lista de compras','gera a lista da semana já dentro do orçamento informado.'],
+        ['Alerta de aderência','avisa você quando alguém para de registrar por vários dias.']
+      ],
+      av:'JA', name:'Juliana Andrade', chan:'WHATSAPP',
+      chat:[
+        {t:'them', x:'[foto do almoço] comi isso agora, tá muito ruim?'},
+        {t:'tool', tag:'Leitura da refeição', rows:[['Proteína','38 g'],['Carboidrato','62 g'],['Gordura','19 g'],['Total','~610 kcal']]},
+        {t:'twin', x:'Está dentro. Faltou verdura: joga uma salada no jantar e o dia fecha certo.'},
+        {t:'typing'}
+      ]
+    },
+    relacao: {
+      kicker:'Relacionamentos & Postura',
+      title:'Análise de print de conversa e auditoria de perfil',
+      intro:'O assinante manda o print da conversa e recebe a leitura do que aconteceu e a próxima mensagem sugerida — no seu enquadramento, não em conselho de internet.',
+      mods:[
+        ['Leitura de print','interpreta o tom da conversa e aponta onde o interesse subiu ou caiu.'],
+        ['Próxima mensagem','sugere respostas alinhadas ao seu método, com o nível de investimento certo.'],
+        ['Auditoria de perfil','avalia bio, fotos e feed do Instagram e devolve um plano de ajuste.'],
+        ['Termômetro de interesse','acompanha a evolução da conversa ao longo dos dias.']
+      ],
+      av:'LM', name:'Lucas Menezes', chan:'DM',
+      chat:[
+        {t:'them', x:'[print] ela demorou 6h pra responder e mandou só "kkk". Sumo?'},
+        {t:'tool', tag:'Leitura da conversa', rows:[['Investimento dela','baixo'],['Seu último texto','longo demais'],['Ação sugerida','encerrar e propor']]},
+        {t:'twin', x:'Não some, encerra bem. Resposta curta e um convite com dia e hora marcados.'},
+        {t:'audio', x:'0:19'}
+      ]
+    },
+    fin: {
+      kicker:'Finanças & Carreira',
+      title:'Diagnóstico de orçamento e as mensagens difíceis prontas',
+      intro:'A mente lê o extrato do assinante, aponta os vazamentos e escreve o e-mail de negociação que ele não conseguiria escrever sozinho.',
+      mods:[
+        ['Diagnóstico de orçamento','classifica os gastos, encontra os vazamentos e projeta a sobra do mês.'],
+        ['Plano de quitação','ordena as dívidas e calcula em quantos meses cada uma sai.'],
+        ['Gerador de e-mails','escreve pedido de aumento, negociação e cobrança no seu enquadramento.'],
+        ['Simulador de aportes','mostra o efeito de mudar o valor investido todo mês.']
+      ],
+      av:'MC', name:'Marcos Camargo', chan:'E-MAIL',
+      chat:[
+        {t:'them', x:'Ganho 7,4k e não sobra nada. Onde tá o buraco?'},
+        {t:'tool', tag:'Diagnóstico do mês', rows:[['Fixos','R$ 3.180'],['Delivery e apps','R$ 1.420'],['Juros do rotativo','R$ 690'],['Sobra real','R$ 110']]},
+        {t:'twin', x:'O rotativo é o urgente. Portabilidade dessa dívida libera R$ 690 por mês na hora.'},
+        {t:'audio', x:'0:26'}
+      ]
+    }
+  };
+
+  var panel = document.getElementById('nichePanel');
+  var nChat = document.getElementById('nicheChat');
+  var nAv = document.getElementById('nicheAv');
+  var nName = document.getElementById('nicheName');
+  var nChan = document.getElementById('nicheChan');
+
+  function renderNiche(key){
+    var d = NICHES[key];
+    var mods = d.mods.map(function(m){
+      return '<li><span class="mod-dot"></span><span><b>' + m[0] + '</b> — ' + m[1] + '</span></li>';
+    }).join('');
+    panel.innerHTML =
+      '<div class="niche-panel">' +
+        '<div class="niche-kicker">' + d.kicker + '</div>' +
+        '<h3>' + d.title + '</h3>' +
+        '<p>' + d.intro + '</p>' +
+        '<ul class="niche-mods">' + mods + '</ul>' +
+      '</div>';
+    nAv.textContent = d.av;
+    nName.textContent = d.name;
+    nChan.textContent = d.chan;
+    build(nChat, d.chat);
+  }
+
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.tab'));
+  tabs.forEach(function(t){
+    t.addEventListener('click', function(){
+      tabs.forEach(function(o){ o.setAttribute('aria-selected','false'); });
+      t.setAttribute('aria-selected','true');
+      renderNiche(t.dataset.niche);
+    });
+  });
+  renderNiche('fitness');
+
+  /* ---------- CALCULADORA ---------- */
+  var sFol = document.getElementById('sFol'),
+      sConv = document.getElementById('sConv'),
+      sPrice = document.getElementById('sPrice');
+
+  var brl = function(n){
+    return 'R$ ' + Math.round(n).toLocaleString('pt-BR');
+  };
+
+  function calc(){
+    var fol = +sFol.value,
+        conv = +sConv.value / 10,     // 0,1% a 5,0%
+        price = +sPrice.value;
+
+    var subs = Math.round(fol * conv / 100);
+    var mrr = subs * price;
+    var msgs = subs * 30;             // ~30 interações por assinante/mês
+    var hours = Math.round(msgs * 0.25 / 60); // ~15s por resposta manual
+    var net = mrr * 0.78;             // após lojas, gateway e plataforma
+
+    document.getElementById('vFol').textContent = fol.toLocaleString('pt-BR');
+    document.getElementById('vConv').textContent = conv.toFixed(1).replace('.', ',') + '%';
+    document.getElementById('vPrice').textContent = brl(price);
+
+    document.getElementById('oMrr').textContent = brl(mrr);
+    document.getElementById('oSubs').textContent = subs.toLocaleString('pt-BR') + ' assinantes pagando todo mês';
+    document.getElementById('oArr').textContent = brl(mrr * 12);
+    document.getElementById('oMsgs').textContent = msgs.toLocaleString('pt-BR') + '/mês';
+    document.getElementById('oHours').textContent = hours.toLocaleString('pt-BR') + ' h/mês';
+    document.getElementById('oNet').textContent = brl(net);
+  }
+  [sFol, sConv, sPrice].forEach(function(s){ s.addEventListener('input', calc); });
+  calc();
+
+  /* ---------- LISTA DE ESPERA ---------- */
+  var email = document.getElementById('email'),
+      msg = document.getElementById('msg'),
+      joinBtn = document.getElementById('joinBtn');
+
+  function join(){
+    var v = email.value.trim();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)){
+      msg.className = 'waitlist-msg err';
+      msg.textContent = 'Digite um e-mail válido para reservar a vaga.';
+      email.focus();
+      return;
+    }
+    msg.className = 'waitlist-msg ok';
+    msg.textContent = 'Vaga reservada. Enviamos os próximos passos para ' + v;
+    email.value = '';
+    joinBtn.textContent = 'Vaga reservada';
+    joinBtn.disabled = true;
+    joinBtn.style.opacity = '.65';
+  }
+  joinBtn.addEventListener('click', join);
+  email.addEventListener('keydown', function(e){ if(e.key === 'Enter') join(); });
+
+  /* ---------- FAQ ---------- */
+  document.querySelectorAll('.faq-item').forEach(function(item){
+    var q = item.querySelector('.faq-q'), a = item.querySelector('.faq-a');
+    q.addEventListener('click', function(){
+      var open = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(function(o){
+        o.classList.remove('open');
+        o.querySelector('.faq-a').style.maxHeight = null;
+        o.querySelector('.faq-q').setAttribute('aria-expanded','false');
+      });
+      if(!open){
+        item.classList.add('open');
+        a.style.maxHeight = a.scrollHeight + 'px';
+        q.setAttribute('aria-expanded','true');
+      }
+    });
+  });
+  document.querySelector('.faq-item .faq-q').click();
+})();
+</script>
+</body>
+</html>
