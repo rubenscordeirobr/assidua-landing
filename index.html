@@ -172,8 +172,8 @@ section{position:relative}
   border-bottom-color:var(--line);
   padding:.72rem 0;
 }
-.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:1.5rem}
-.logo{display:flex;align-items:center;gap:.65rem;font-family:'Sora',sans-serif;font-weight:700;font-size:1.1rem;letter-spacing:-.03em}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:clamp(1rem,2vw,1.8rem)}
+.logo{display:flex;align-items:center;gap:.65rem;font-family:'Sora',sans-serif;font-weight:700;font-size:1.1rem;letter-spacing:-.03em;flex-shrink:0;white-space:nowrap}
 .logo-mark{
   width:30px;height:30px;border-radius:9px;
   background:var(--grad);position:relative;flex-shrink:0;
@@ -182,10 +182,10 @@ section{position:relative}
 .logo-mark::after{
   content:"";width:2px;height:16px;background:rgba(8,8,13,.85);border-radius:2px;
 }
-.nav-links{display:flex;gap:2.1rem;font-size:.93rem;color:var(--muted)}
-.nav-links a{transition:color .2s}
+.nav-links{display:flex;gap:clamp(1.05rem,1.9vw,2rem);font-size:.91rem;color:var(--muted);flex-shrink:0}
+.nav-links a{transition:color .2s;white-space:nowrap}
 .nav-links a:hover{color:var(--text)}
-.nav-cta{display:flex;align-items:center;gap:.85rem}
+.nav-cta{display:flex;align-items:center;gap:.7rem;flex-shrink:0}
 .nav-burger{display:none}
 
 /* ============================================================
@@ -731,6 +731,171 @@ input[type=range]::-moz-range-thumb{
 .foot-bar div{display:flex;gap:1.5rem;flex-wrap:wrap}
 
 /* ============================================================
+   VIDEOCHAMADA / AVATAR
+   ============================================================ */
+.live{background:linear-gradient(180deg,var(--void),#0A0A13 48%,var(--void))}
+.live-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:clamp(2.5rem,5vw,4.2rem);align-items:center}
+
+.call{
+  position:relative;border-radius:var(--r-xl);overflow:hidden;
+  border:1px solid var(--line-strong);aspect-ratio:4/3.35;
+  background:radial-gradient(ellipse at 50% 18%,#1A1A28,#07070D 74%);
+  box-shadow:0 50px 100px -35px rgba(0,0,0,.92),0 0 90px -30px rgba(123,92,255,.45);
+  display:flex;flex-direction:column;
+}
+.call-hud{
+  position:absolute;top:0;left:0;right:0;z-index:5;
+  padding:1rem;display:flex;justify-content:space-between;gap:.6rem;
+}
+.chip{
+  font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.1em;
+  padding:.32rem .62rem;border-radius:100px;color:var(--muted);
+  background:rgba(8,8,14,.72);border:1px solid var(--line-strong);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  display:inline-flex;align-items:center;gap:.42rem;white-space:nowrap;
+}
+.chip b{font-weight:500;color:var(--text)}
+.chip .rec{width:6px;height:6px;border-radius:50%;background:#FF5C7A;animation:pulse 1.7s ease-in-out infinite}
+.chip.ok{color:var(--mint);border-color:rgba(52,228,176,.32)}
+
+.call-stage{flex:1;position:relative;display:grid;place-items:center;overflow:hidden}
+.call-stage::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 60% 45% at 50% 42%,transparent,rgba(7,7,13,.55) 92%);
+}
+.portrait{position:relative;width:min(240px,54%);aspect-ratio:3/4;margin-bottom:-2%}
+.p-shoulders{
+  position:absolute;left:50%;bottom:0;transform:translateX(-50%);
+  width:126%;height:36%;border-radius:50% 50% 0 0;
+  background:linear-gradient(180deg,#2E2A4A,#15131F);
+}
+.p-head{
+  position:absolute;left:50%;top:3%;transform:translateX(-50%);
+  width:63%;height:68%;border-radius:47% 47% 42% 42%;
+  background:linear-gradient(158deg,#463C6B,#2A2340);
+  box-shadow:inset 0 -18px 36px rgba(0,0,0,.42);
+}
+.p-hair{
+  position:absolute;left:-6%;top:-5%;width:112%;height:42%;
+  border-radius:48% 48% 34% 34%;
+  background:linear-gradient(160deg,#221C36,#15112A);
+}
+.p-eye{
+  position:absolute;top:44%;width:15%;height:5.5%;border-radius:100px;
+  background:#CFC7EE;animation:blink 5.2s ease-in-out infinite;
+}
+.p-eye.l{left:22%} .p-eye.r{right:22%}
+@keyframes blink{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.12)}}
+.p-mouth{
+  position:absolute;left:50%;bottom:17%;transform:translateX(-50%);
+  width:26%;height:7%;border-radius:100px;
+  background:linear-gradient(180deg,#1C1330,#0E0A1A);
+  animation:talk 1.05s ease-in-out infinite;transform-origin:center;
+}
+@keyframes talk{0%,100%{transform:translateX(-50%) scaleY(.35)}30%{transform:translateX(-50%) scaleY(1.45)}55%{transform:translateX(-50%) scaleY(.7)}75%{transform:translateX(-50%) scaleY(1.15)}}
+.p-mesh{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+
+.selfview{
+  position:absolute;right:14px;bottom:86px;z-index:5;
+  width:21%;aspect-ratio:3/4;border-radius:12px;overflow:hidden;
+  border:1px solid var(--line-strong);
+  background:linear-gradient(158deg,#16161F,#0A0A11);
+  display:grid;place-items:center;
+  font-family:'JetBrains Mono',monospace;font-size:.55rem;
+  letter-spacing:.1em;color:var(--faint);
+}
+.call-cap{position:absolute;left:0;right:0;bottom:80px;z-index:5;text-align:center;padding:0 1.3rem}
+.call-cap span{
+  display:inline-block;max-width:92%;
+  padding:.46rem .82rem;border-radius:11px;
+  background:rgba(8,8,14,.8);border:1px solid var(--line);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  font-size:.79rem;line-height:1.45;color:#DEDEEC;
+}
+.call-bar{
+  position:relative;z-index:5;flex-shrink:0;
+  padding:.85rem 1.05rem;display:flex;align-items:center;gap:.65rem;
+  background:linear-gradient(180deg,transparent,rgba(7,7,13,.94));
+  border-top:1px solid rgba(255,255,255,.06);
+}
+.ctrl{
+  width:36px;height:36px;border-radius:50%;flex-shrink:0;
+  border:1px solid var(--line-strong);background:rgba(255,255,255,.06);
+  display:grid;place-items:center;color:var(--muted);
+}
+.ctrl.end{background:#E5455F;border-color:transparent;color:#fff;margin-left:auto}
+.call-wave{display:flex;align-items:center;gap:2px;height:19px;flex:1;overflow:hidden}
+.call-wave i{width:2px;border-radius:2px;background:var(--violet);animation:wv 1s ease-in-out infinite}
+.call-timer{font-family:'JetBrains Mono',monospace;font-size:.71rem;color:var(--muted);flex-shrink:0}
+
+.spec-chips{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:1.7rem}
+
+/* ============================================================
+   COACH INTERATIVO
+   ============================================================ */
+.coach-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2.5rem,5vw,4.5rem);align-items:center}
+.lms{
+  border:1px solid var(--line);border-radius:var(--r-xl);
+  background:linear-gradient(158deg,var(--surface-2),var(--ink) 70%);
+  padding:1.6rem;box-shadow:0 40px 90px -45px rgba(0,0,0,.9);
+}
+.lms-top{
+  display:flex;align-items:center;gap:1rem;
+  padding-bottom:1.25rem;border-bottom:1px solid var(--line);margin-bottom:1.3rem;
+}
+.lms-top .txt{flex:1;min-width:0}
+.lms-title{font-family:'Sora',sans-serif;font-weight:600;font-size:.99rem;letter-spacing:-.02em}
+.lms-sub{font-size:.74rem;color:var(--faint);margin-top:.15rem}
+.ring{
+  width:54px;height:54px;border-radius:50%;flex-shrink:0;
+  background:conic-gradient(var(--violet) 0turn,var(--cyan) .62turn,rgba(255,255,255,.08) .62turn);
+  display:grid;place-items:center;
+}
+.ring::after{
+  content:"62%";width:42px;height:42px;border-radius:50%;background:var(--ink);
+  display:grid;place-items:center;
+  font-family:'JetBrains Mono',monospace;font-size:.66rem;color:var(--text);
+}
+.mod{
+  display:flex;align-items:center;gap:.8rem;
+  padding:.78rem .9rem;border-radius:12px;margin-bottom:.5rem;
+  border:1px solid var(--line);background:rgba(255,255,255,.02);
+}
+.mod .ix{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--faint);flex-shrink:0}
+.mod .nm{font-size:.855rem;flex:1;min-width:0}
+.mod .st{
+  font-family:'JetBrains Mono',monospace;font-size:.58rem;
+  letter-spacing:.1em;text-transform:uppercase;
+  padding:.22rem .52rem;border-radius:100px;
+  border:1px solid var(--line);color:var(--faint);flex-shrink:0;
+}
+.mod.done .st{color:var(--mint);border-color:rgba(52,228,176,.32)}
+.mod.now{border-color:rgba(123,92,255,.45);background:rgba(123,92,255,.075)}
+.mod.now .st{color:#BFAEFF;border-color:rgba(123,92,255,.42)}
+.mod.lock{opacity:.42}
+.lms-live{
+  margin-top:1.25rem;padding:.95rem 1rem;border-radius:14px;
+  border:1px solid rgba(34,211,238,.3);background:rgba(34,211,238,.06);
+  display:flex;align-items:center;gap:.85rem;
+}
+.lms-live .dot{width:8px;height:8px;border-radius:50%;background:var(--cyan);box-shadow:0 0 0 4px rgba(34,211,238,.16);animation:pulse 2s infinite;flex-shrink:0}
+.lms-live .txt{flex:1;min-width:0}
+.lms-live strong{display:block;font-size:.87rem;font-weight:600;font-family:'Sora',sans-serif;letter-spacing:-.02em}
+.lms-live small{font-size:.73rem;color:var(--muted)}
+.lms-grade{
+  margin-top:.6rem;padding:1rem;border-radius:14px;
+  border:1px solid var(--line);background:rgba(255,255,255,.025);
+  display:flex;gap:1rem;align-items:flex-start;
+}
+.grade-num{
+  font-family:'Sora',sans-serif;font-weight:700;font-size:1.65rem;letter-spacing:-.04em;line-height:1;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  flex-shrink:0;
+}
+.grade-txt{font-size:.8rem;color:var(--muted);line-height:1.55}
+.grade-txt b{color:var(--text);font-weight:600;display:block;font-size:.83rem;margin-bottom:.15rem}
+
+/* ============================================================
    REVEAL
    ============================================================ */
 .rv{opacity:0;transform:translateY(24px);transition:opacity .75s var(--ease),transform .75s var(--ease)}
@@ -739,8 +904,14 @@ input[type=range]::-moz-range-thumb{
 /* ============================================================
    RESPONSIVO
    ============================================================ */
+@media(max-width:1180px){
+  .nav-cta .btn-ghost{display:none}
+}
+@media(max-width:1080px){
+  .nav-links{display:none}
+}
 @media(max-width:1024px){
-  .hero-grid,.sol-grid,.niche-grid,.faq-grid{grid-template-columns:1fr}
+  .hero-grid,.sol-grid,.niche-grid,.faq-grid,.live-grid,.coach-grid{grid-template-columns:1fr}
   .phone-stage{margin-top:2.5rem}
   .calc-shell{grid-template-columns:1fr}
   .calc-controls{border-right:none;border-bottom:1px solid var(--line)}
@@ -770,6 +941,11 @@ input[type=range]::-moz-range-thumb{
   .btn-row{width:100%}
   .btn-row .btn{flex:1;min-width:200px}
   .final-meta{gap:1.2rem;flex-direction:column}
+  .call{aspect-ratio:4/4.1}
+  .selfview{bottom:80px;width:26%}
+  .call-cap{bottom:74px}
+  .call-cap span{font-size:.73rem}
+  .lms{padding:1.15rem}
 }
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
@@ -786,7 +962,8 @@ input[type=range]::-moz-range-thumb{
     <div class="nav-links">
       <a href="#solucao">Como funciona</a>
       <a href="#recursos">Recursos</a>
-      <a href="#nichos">Para o seu nicho</a>
+      <a href="#videochamada">Videochamada</a>
+      <a href="#coach">Aulas ao vivo</a>
       <a href="#calculadora">Faturamento</a>
       <a href="#faq">Dúvidas</a>
     </div>
@@ -807,7 +984,7 @@ input[type=range]::-moz-range-thumb{
     <div>
       <div class="hero-badge"><span class="dot"></span>Beta fechado · 40 vagas para o 1º lote</div>
       <h1>Clone sua mente.<br>Lance seu app.<br><span class="grad-text">Monetize 24 horas por dia.</span></h1>
-      <p class="lede">A MindTwin cria uma versão digital de você — seu tom de voz, seus métodos, sua voz real — e coloca ela dentro de um aplicativo com a sua marca na App Store e no Google Play. Seus seguidores assinam para conversar com ela. Você não responde mais um DM sequer.</p>
+      <p class="lede">A MindTwin cria uma versão digital de você — seu tom de voz, seus métodos, sua voz real e agora também o seu rosto em videochamada — e coloca ela dentro de um aplicativo com a sua marca na App Store e no Google Play. Seus seguidores assinam para conversar com ela. Você não responde mais um DM sequer.</p>
       <div class="btn-row">
         <a href="#beta" class="btn btn-primary btn-lg">Criar minha Mente Digital</a>
         <a href="#demo" class="btn btn-ghost btn-lg">Agendar demonstração VIP</a>
@@ -1008,9 +1185,9 @@ input[type=range]::-moz-range-thumb{
       <div class="card feat rv">
         <div class="feat-glow"></div>
         <div class="feat-ico"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M3 12v-1M7 15V9M11 19V5M15 16V8M19 13v-2M23 12v-1"/></svg></div>
-        <h3>Voz clonada em áudio</h3>
-        <p>Grave 10 minutos e a mente passa a responder em áudio com o seu timbre, ritmo e sotaque. É o que faz o assinante sentir que falou com você — e é o que segura a retenção.</p>
-        <div class="feat-tags"><span class="tag">TTS</span><span class="tag">PT-BR</span><span class="tag">multilíngue</span></div>
+        <h3>Voz clonada em áudio e vídeo</h3>
+        <p>Grave 10 minutos e a mente passa a responder em áudio com o seu timbre, ritmo e sotaque. Com o avatar ativo, a mesma voz sai por um rosto que fala na tela, em videochamada ao vivo.</p>
+        <div class="feat-tags"><span class="tag">TTS</span><span class="tag">PT-BR</span><span class="tag">multilíngue</span><span class="tag">vídeo</span></div>
       </div>
 
       <div class="card feat rv">
@@ -1071,6 +1248,145 @@ input[type=range]::-moz-range-thumb{
   </div>
 </section>
 
+<!-- ================= VIDEOCHAMADA / AVATAR ================= -->
+<section class="band live" id="videochamada">
+  <div class="wrap">
+    <div class="head center rv">
+      <div class="eyebrow">Presença ao vivo</div>
+      <h2>Agora ela também <span class="grad-text">aparece na câmera</span>.</h2>
+      <p class="lede">A chamada de voz virou videochamada. Seu rosto na tela, sincronizado com a fala gerada pela sua voz clonada, olhando para o assinante em tempo real. Duas tecnologias, para dois níveis de exigência e de orçamento.</p>
+    </div>
+
+    <div class="tabs" role="tablist" aria-label="Tecnologias de avatar">
+      <button class="tab" role="tab" aria-selected="true" data-av="p2d">Retrato falante 2D</button>
+      <button class="tab" role="tab" aria-selected="false" data-av="a3d">Avatar 3D</button>
+    </div>
+
+    <div class="live-grid">
+      <div class="call rv" id="call">
+        <div class="call-hud">
+          <span class="chip"><span class="rec"></span>AO VIVO</span>
+          <span class="chip" id="chipMode">2D · RETRATO FALANTE</span>
+        </div>
+
+        <div class="call-stage">
+          <div class="portrait">
+            <div class="p-shoulders"></div>
+            <div class="p-head">
+              <div class="p-hair"></div>
+              <div class="p-eye l"></div>
+              <div class="p-eye r"></div>
+              <div class="p-mouth"></div>
+              <svg class="p-mesh" id="pMesh" viewBox="0 0 100 130" aria-hidden="true"></svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="selfview">VOCÊ</div>
+        <div class="call-cap"><span id="callCap">—</span></div>
+
+        <div class="call-bar">
+          <button class="ctrl" aria-label="Microfone" tabindex="-1">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3"/></svg>
+          </button>
+          <button class="ctrl" aria-label="Câmera" tabindex="-1">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="6" width="13" height="12" rx="2.5"/><path d="M15 11l7-4v10l-7-4z"/></svg>
+          </button>
+          <div class="call-wave" id="callWave"></div>
+          <span class="call-timer" id="chipLat">180 ms</span>
+          <span class="call-timer">04:12</span>
+          <button class="ctrl end" aria-label="Encerrar" tabindex="-1">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 10c6-4 12-4 18 0v4l-4.5.6-1-3.2c-2.3-.9-4.7-.9-7 0l-1 3.2L3 14z"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div id="avPanel" class="rv"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= COACH INTERATIVO ================= -->
+<section class="band" id="coach">
+  <div class="wrap">
+    <div class="head rv">
+      <div class="eyebrow">Ensino guiado</div>
+      <h2>De quem responde dúvida<br>para quem <span class="grad-text">dá aula</span>.</h2>
+      <p class="lede">Com o avatar na tela, a Mente Digital deixa de ser um canal de suporte e passa a conduzir uma formação inteira: trilha estruturada, aula ao vivo, prova corrigida na hora e devolutiva individual. O seu curso deixa de ser um vídeo gravado e vira um professor disponível.</p>
+    </div>
+
+    <div class="coach-grid">
+      <div class="rv">
+        <div class="sol-points" style="margin-top:0">
+          <div class="sol-point">
+            <div class="sol-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 5h6a3 3 0 0 1 3 3v12a2.5 2.5 0 0 0-2.5-2.5H4z"/><path d="M20 5h-6a3 3 0 0 0-3 3v12a2.5 2.5 0 0 1 2.5-2.5H20z"/></svg></div>
+            <div>
+              <h4>Trilhas de aprendizagem estruturadas</h4>
+              <p>Você desenha os módulos, os pré-requisitos e o ritmo. Cada aluno avança no passo dele, e a mente segura quem tenta pular etapa antes de dominar a anterior.</p>
+            </div>
+          </div>
+          <div class="sol-point">
+            <div class="sol-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="4" width="14" height="12" rx="2.5"/><path d="M16 9l6-3.5v11L16 13z"/><path d="M7 20h8"/></svg></div>
+            <div>
+              <h4>Aula ao vivo com o avatar apresentando</h4>
+              <p>Turma em horário marcado, com o seu avatar 2D ou 3D conduzindo a aula, respondendo às perguntas do chat na hora e chamando cada aluno pelo nome. Você não precisa estar na sala.</p>
+            </div>
+          </div>
+          <div class="sol-point">
+            <div class="sol-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 3h11l4 4v14a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M8.5 13.5l2.5 2.5 4.5-5"/></svg></div>
+            <div>
+              <h4>Avaliação automática do aluno</h4>
+              <p>Quiz, exercício aberto, envio de foto ou de arquivo — tudo corrigido no momento em que chega, com nota e justificativa escritas segundo o seu critério, não segundo um gabarito genérico.</p>
+            </div>
+          </div>
+          <div class="sol-point">
+            <div class="sol-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9 9 0 0 1-3.7-.8L3 21l1.9-5.3A8.4 8.4 0 0 1 4 11.5 8.5 8.5 0 0 1 12.5 3 8.5 8.5 0 0 1 21 11.5z"/></svg></div>
+            <div>
+              <h4>Feedback individual em vídeo</h4>
+              <p>Ao fechar cada módulo, o aluno recebe uma devolutiva gravada pelo avatar, citando o que ele fez, onde escorregou e o que mudar no próximo módulo. Personalizada, para milhares de pessoas ao mesmo tempo.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rv">
+        <div class="lms">
+          <div class="lms-top">
+            <div class="ring"></div>
+            <div class="txt">
+              <div class="lms-title">Hipertrofia do Zero · Turma 12</div>
+              <div class="lms-sub">Módulo 4 de 8 · próximo encontro em 3 h</div>
+            </div>
+          </div>
+
+          <div class="mod done"><span class="ix">01</span><span class="nm">Fundamentos de sobrecarga progressiva</span><span class="st">Concluído</span></div>
+          <div class="mod done"><span class="ix">02</span><span class="nm">Montagem da divisão semanal</span><span class="st">Concluído</span></div>
+          <div class="mod done"><span class="ix">03</span><span class="nm">Técnica dos seis movimentos base</span><span class="st">Concluído</span></div>
+          <div class="mod now"><span class="ix">04</span><span class="nm">Periodização e ajuste de volume</span><span class="st">Em curso</span></div>
+          <div class="mod lock"><span class="ix">05</span><span class="nm">Estratégias para platô</span><span class="st">Bloqueado</span></div>
+
+          <div class="lms-live">
+            <span class="dot"></span>
+            <div class="txt">
+              <strong>Aula ao vivo hoje, 20h</strong>
+              <small>Avatar 3D apresentando · 214 alunos inscritos</small>
+            </div>
+            <a href="#beta" class="btn btn-ghost btn-sm">Entrar</a>
+          </div>
+
+          <div class="lms-grade">
+            <div class="grade-num">8,5</div>
+            <div class="grade-txt">
+              <b>Avaliação do módulo 3 corrigida</b>
+              Acertou a execução do agachamento e do remada. Errou o cálculo de volume semanal: você somou as séries de aquecimento. Refaça o exercício 4 antes de abrir o módulo seguinte.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ================= COMO FUNCIONA ================= -->
 <section class="band" id="passos">
   <div class="wrap">
@@ -1090,8 +1406,8 @@ input[type=range]::-moz-range-thumb{
       <div class="step rv">
         <div class="step-num grad-text">02</div>
         <h3>Monte o seu app</h3>
-        <p>Escolha cores, logo e nome. Ative os módulos do seu nicho, defina o que é grátis e o que é VIP, e revise as respostas da mente em um simulador antes de qualquer pessoa falar com ela.</p>
-        <div class="step-meta">Marca · módulos · planos · revisão</div>
+        <p>Escolha cores, logo e nome. Monte o seu avatar 2D ou 3D, ative os módulos do seu nicho, desenhe as trilhas de aula, defina o que é grátis e o que é VIP, e revise as respostas da mente em um simulador antes de qualquer pessoa falar com ela.</p>
+        <div class="step-meta">Marca · avatar · módulos · trilhas · planos</div>
       </div>
       <div class="step rv">
         <div class="step-num grad-text">03</div>
@@ -1246,6 +1562,14 @@ input[type=range]::-moz-range-thumb{
           <div class="faq-a"><p>A mente responde a partir do seu acervo e admite quando não sabe, em vez de inventar. Você define temas proibidos e situações em que ela deve encaminhar para o seu time. Todas as conversas ficam registradas no painel, e correções que você faz entram no treinamento da próxima versão.</p></div>
         </div>
         <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">Preciso gravar vídeo para ter o avatar?<span class="faq-ico"></span></button>
+          <div class="faq-a"><p>Para o retrato falante 2D, uma foto frontal em boa luz já resolve — se você tiver 30 segundos de vídeo falando, o resultado fica melhor ainda. Para o avatar 3D, fazemos uma sessão de captura guiada, remota, de cerca de 40 minutos, e a partir dali o personagem é construído pelo nosso time. Você aprova antes de qualquer coisa ir ao ar.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">O celular do meu aluno aguenta a videochamada 3D?<span class="faq-ico"></span></button>
+          <div class="faq-a"><p>Sim, porque a renderização é híbrida. Em aparelhos mais novos o avatar roda no próprio dispositivo. Nos demais, a cena é renderizada na nossa nuvem e transmitida como vídeo por WebRTC, então o celular só precisa reproduzir um stream comum. Quando a conexão cai muito, a chamada degrada sozinha para o retrato 2D em vez de travar.</p></div>
+        </div>
+        <div class="faq-item">
           <button class="faq-q" aria-expanded="false">O app é meu ou de vocês?<span class="faq-ico"></span></button>
           <div class="faq-a"><p>A marca, a base de assinantes e o conteúdo são seus. O app é publicado sob a sua identidade e a lista de e-mails dos assinantes é exportável quando você quiser. Se decidir sair, você leva a sua audiência junto.</p></div>
         </div>
@@ -1290,6 +1614,8 @@ input[type=range]::-moz-range-thumb{
         <h4>Plataforma</h4>
         <ul>
           <li><a href="#recursos">Recursos</a></li>
+          <li><a href="#videochamada">Videochamada e avatar</a></li>
+          <li><a href="#coach">Coach e aulas ao vivo</a></li>
           <li><a href="#nichos">Módulos por nicho</a></li>
           <li><a href="#passos">Como funciona</a></li>
           <li><a href="#calculadora">Calculadora de receita</a></li>
@@ -1513,6 +1839,153 @@ input[type=range]::-moz-range-thumb{
     });
   });
   renderNiche('fitness');
+
+  /* ---------- VIDEOCHAMADA / AVATAR ---------- */
+  var mesh = document.getElementById('pMesh'),
+      avPanel = document.getElementById('avPanel'),
+      chipMode = document.getElementById('chipMode'),
+      chipLat = document.getElementById('chipLat'),
+      callCap = document.getElementById('callCap');
+
+  // onda do áudio na barra da chamada
+  (function(){
+    var w = document.getElementById('callWave'), html = '';
+    for(var i = 0; i < 34; i++){
+      html += '<i style="animation-delay:' + (i * 0.055).toFixed(2) + 's"></i>';
+    }
+    w.innerHTML = html;
+  })();
+
+  // pontos sobre uma elipse facial (viewBox 0 0 100 130)
+  function facePoint(a, rx, ry){
+    return [50 + Math.cos(a) * rx, 62 + Math.sin(a) * ry];
+  }
+
+  function mesh2D(){
+    var s = '', i, p, a;
+    // contorno do rosto: 22 landmarks
+    for(i = 0; i < 22; i++){
+      a = (i / 22) * Math.PI * 2;
+      p = facePoint(a, 44, 56);
+      s += '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="1.5" fill="#22D3EE" opacity=".8"/>';
+    }
+    // sobrancelhas, olhos e boca
+    var feats = [
+      [24,48],[31,45],[38,46],[62,46],[69,45],[76,48],
+      [26,58],[31,56],[36,58],[31,60],
+      [64,58],[69,56],[74,58],[69,60],
+      [38,92],[44,89],[50,88],[56,89],[62,92],[56,96],[50,97],[44,96]
+    ];
+    feats.forEach(function(f){
+      s += '<circle cx="' + f[0] + '" cy="' + f[1] + '" r="1.3" fill="#7B5CFF" opacity=".95"/>';
+    });
+    // contorno da boca ligando os landmarks
+    s += '<path d="M38 92 Q50 85 62 92 Q50 100 38 92 Z" fill="none" stroke="#22D3EE" stroke-width=".7" opacity=".55"/>';
+    s += '<path d="M24 48 Q31 43 38 46" fill="none" stroke="#22D3EE" stroke-width=".7" opacity=".45"/>';
+    s += '<path d="M62 46 Q69 43 76 48" fill="none" stroke="#22D3EE" stroke-width=".7" opacity=".45"/>';
+    return s;
+  }
+
+  function mesh3D(){
+    var s = '', ring, i, a, p, q, r, inner = [], outer = [];
+    // malha em anéis concêntricos, triangulada entre anéis
+    var rings = [[16,20],[30,38],[42,52]];
+    for(ring = 0; ring < rings.length; ring++){
+      var pts = [];
+      for(i = 0; i < 16; i++){
+        a = (i / 16) * Math.PI * 2;
+        pts.push(facePoint(a, rings[ring][0], rings[ring][1]));
+      }
+      outer.push(pts);
+    }
+    // arestas dos anéis
+    outer.forEach(function(pts, ri){
+      var d = 'M' + pts[0][0].toFixed(1) + ' ' + pts[0][1].toFixed(1);
+      for(i = 1; i < pts.length; i++) d += 'L' + pts[i][0].toFixed(1) + ' ' + pts[i][1].toFixed(1);
+      d += 'Z';
+      s += '<path d="' + d + '" fill="none" stroke="#7B5CFF" stroke-width=".6" opacity="' + (0.5 - ri * 0.08).toFixed(2) + '"/>';
+    });
+    // arestas radiais + diagonais (triangulação)
+    for(ring = 0; ring < outer.length - 1; ring++){
+      for(i = 0; i < 16; i++){
+        p = outer[ring][i];
+        q = outer[ring + 1][i];
+        r = outer[ring + 1][(i + 1) % 16];
+        s += '<path d="M' + p[0].toFixed(1) + ' ' + p[1].toFixed(1) + 'L' + q[0].toFixed(1) + ' ' + q[1].toFixed(1) +
+             'L' + r[0].toFixed(1) + ' ' + r[1].toFixed(1) + 'Z" fill="rgba(123,92,255,.05)" stroke="#22D3EE" stroke-width=".4" opacity=".38"/>';
+      }
+    }
+    // eixo central do rig
+    s += '<path d="M50 12 L50 118" stroke="#22D3EE" stroke-width=".5" opacity=".35" stroke-dasharray="2 3"/>';
+    return s;
+  }
+
+  var AVATARS = {
+    p2d: {
+      chip:'2D · RETRATO FALANTE',
+      lat:'180 ms',
+      cap:'A partir de uma única foto sua, o motor anima o rosto e sincroniza os lábios com o áudio.',
+      kicker:'Leve · a partir de uma foto',
+      title:'Uma foto sua vira um rosto que fala',
+      intro:'Você envia uma imagem estática de frente ou um vídeo curto de referência. O motor deforma a face quadro a quadro e faz a sincronia labial com o áudio gerado pela sua voz clonada. É o caminho mais rápido e mais barato para colocar a sua Mente Digital na câmera.',
+      mods:[
+        ['Ponto de partida','uma foto frontal em boa luz, ou 30 segundos de vídeo falando.'],
+        ['Sincronia labial','os visemas acompanham o áudio do TTS, palavra por palavra.'],
+        ['Microexpressões','piscar, sobrancelha, leve inclinação de cabeça e respiração — o que impede o efeito de foto congelada.'],
+        ['Custo de operação','roda no plano de entrada, sem GPU dedicada por assinante.'],
+        ['Melhor uso','resposta em vídeo curto no DM, mensagem de boas-vindas e videochamada de suporte.']
+      ],
+      chips:['LivePortrait','SadTalker','Wav2Lip','1 foto','sem GPU dedicada']
+    },
+    a3d: {
+      chip:'3D · PIXEL STREAMING · 60 FPS',
+      lat:'58 ms',
+      cap:'Rig facial completo com blendshapes acionados pelo áudio, renderizado em tempo real.',
+      kicker:'Alta fidelidade · tempo real',
+      title:'Um personagem 3D com a sua identidade',
+      intro:'Malha e rig tridimensionais completos, no nível dos avatares de marca que você já viu na televisão brasileira. Os blendshapes são acionados diretamente pelo áudio, e a cena é renderizada em tempo real e transmitida por WebRTC — no aparelho do assinante ou na nuvem, conforme a potência do dispositivo.',
+      mods:[
+        ['Rig facial completo','blendshapes de visema e de emoção acionados por Audio2Face, com olhar dirigido ao interlocutor.'],
+        ['Corpo inteiro','gestos, postura e movimento de mãos coerentes com o que está sendo dito.'],
+        ['Renderização híbrida','on-device nos aparelhos mais novos, Pixel Streaming em Unreal ou Unity na nuvem para o resto.'],
+        ['Cenário com a sua marca','estúdio, sala de aula, consultório ou academia — o mesmo ambiente em toda chamada.'],
+        ['Reaproveitamento','o mesmo avatar atende em videochamada, apresenta a aula ao vivo e grava os vídeos da central de conteúdo.']
+      ],
+      chips:['Unreal Engine','Unity','WebRTC','Audio2Face','blendshapes','on-device + nuvem']
+    }
+  };
+
+  function renderAvatar(key){
+    var d = AVATARS[key];
+    mesh.innerHTML = key === 'p2d' ? mesh2D() : mesh3D();
+    chipMode.textContent = d.chip;
+    chipLat.textContent = d.lat;
+    callCap.textContent = d.cap;
+
+    var mods = d.mods.map(function(m){
+      return '<li><span class="mod-dot"></span><span><b>' + m[0] + '</b> — ' + m[1] + '</span></li>';
+    }).join('');
+    var chips = d.chips.map(function(c){ return '<span class="tag">' + c + '</span>'; }).join('');
+
+    avPanel.innerHTML =
+      '<div class="niche-panel">' +
+        '<div class="niche-kicker">' + d.kicker + '</div>' +
+        '<h3>' + d.title + '</h3>' +
+        '<p>' + d.intro + '</p>' +
+        '<ul class="niche-mods">' + mods + '</ul>' +
+        '<div class="spec-chips">' + chips + '</div>' +
+      '</div>';
+  }
+
+  var avTabs = Array.prototype.slice.call(document.querySelectorAll('[data-av]'));
+  avTabs.forEach(function(t){
+    t.addEventListener('click', function(){
+      avTabs.forEach(function(o){ o.setAttribute('aria-selected','false'); });
+      t.setAttribute('aria-selected','true');
+      renderAvatar(t.dataset.av);
+    });
+  });
+  renderAvatar('p2d');
 
   /* ---------- CALCULADORA ---------- */
   var sFol = document.getElementById('sFol'),
